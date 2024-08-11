@@ -1,0 +1,10 @@
+@import 'variables';
+
+.commision-card {
+  & table {
+    & th {
+      font-weight: 700 !important;
+      color: $accent-gold;
+    }
+  }
+}

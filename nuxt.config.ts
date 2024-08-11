@@ -6,7 +6,15 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   build: {
     transpile: ['vuetify'],
+    loaders: {
+      scss: {
+        additionalData: `@import "@/assets/scss/variables.scss";`
+      }
+    }
   },
+  css: [
+    '~/assets/scss/main.scss'
+  ],
   modules: [
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
