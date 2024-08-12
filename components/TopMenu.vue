@@ -1,6 +1,7 @@
 <template>
   <v-app-bar
     v-if="route.path != '/'"
+    color="blue-lighten-1"
     scroll-behavior="collapse"
     scroll-threshold="150"
     elevation="0"

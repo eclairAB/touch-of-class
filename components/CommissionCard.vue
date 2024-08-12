@@ -1,90 +1,57 @@
 <template>
-  <div>
-    <v-data-table-server
-      v-if="commissionTable"
-      v-model:items-per-page="commissionTable.itemsPerPage"
-      :headers="commissionTable.headers"
-      :items="commissionTable.serverItems"
-      :items-length="commissionTable.totalItems"
-      :loading="commissionTable.loading"
-      :search="commissionTable.search"
-      item-value="name"
-      density="compact"
-      class="commision-card"
-      @update:options="loadItems"
-    >
-      <template v-slot:top>
-        <v-toolbar flat>
-          <v-toolbar-title>Service Payments</v-toolbar-title>
-        </v-toolbar>
+  <v-card class="mx-auto" flat border max-width="450">
+    <v-toolbar color="orange-lighten-4">
+      <!-- <v-btn icon="mdi-menu" variant="text"></v-btn> -->
+      <v-toolbar-title>Commissions</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon="mdi-magnify" variant="text"></v-btn>
+    </v-toolbar>
+
+    <v-list :items="items" lines="three" item-props>
+      <template v-slot:subtitle="{ subtitle }">
+        <div v-html="subtitle"></div>
       </template>
-    </v-data-table-server>
-  </div>
+    </v-list>
+  </v-card>
 </template>
-<script setup>
-const { $myObject } = useNuxtApp();
-
-const commissionTable_ = {
-  itemsPerPage: 25,
-  headers: [
-    {
-      title: "Dessert (100g serving)",
-      align: "start",
-      sortable: false,
-      key: "name",
-    },
-    { title: "Calories", key: "calories", align: "end" },
-    { title: "Fat (g)", key: "fat", align: "end" },
-    { title: "Carbs (g)", key: "carbs", align: "end" },
-    { title: "Protein (g)", key: "protein", align: "end" },
-    { title: "Iron (%)", key: "iron", align: "end" },
-  ],
-  search: "",
-  serverItems: [],
-  loading: true,
-  totalItems: 0,
+  <script>
+export default {
+  data: () => ({
+    items: [
+      { type: "subheader", title: "Today" },
+      {
+        prependAvatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
+        title: "Brunch this weekend?",
+        subtitle: `<span class="text-primary">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
+      },
+      { type: "divider", inset: true },
+      {
+        prependAvatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
+        title: "Summer BBQ",
+        subtitle: `<span class="text-primary">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend.`,
+      },
+      { type: "divider", inset: true },
+      {
+        prependAvatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
+        title: "Oui oui",
+        subtitle:
+          '<span class="text-primary">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?',
+      },
+      { type: "divider", inset: true },
+      {
+        prependAvatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
+        title: "Birthday gift",
+        subtitle:
+          '<span class="text-primary">Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?',
+      },
+      { type: "divider", inset: true },
+      {
+        prependAvatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
+        title: "Recipe to try",
+        subtitle:
+          '<span class="text-primary">Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos.',
+      },
+    ],
+  }),
 };
-const commissionTable = useState(() => {});
-const desserts = useState(() => []);
-
-onMounted(() => {
-  commissionTable.value = commissionTable_;
-  desserts.value = $myObject.dessert;
-});
-
-const FakeAPI = {
-  async fetch({ page, itemsPerPage, sortBy }) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const desserts_ = desserts.value;
-        const start = (page - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const items = desserts_.slice();
-
-        if (sortBy.length) {
-          const sortKey = sortBy[0].key;
-          const sortOrder = sortBy[0].order;
-          items.sort((a, b) => {
-            const aValue = a[sortKey];
-            const bValue = b[sortKey];
-            return sortOrder === "desc" ? bValue - aValue : aValue - bValue;
-          });
-        }
-
-        const paginated = items.slice(start, end);
-
-        resolve({ items: paginated, total: items.length });
-      }, 500);
-    });
-  },
-};
-
-function loadItems({ page, itemsPerPage, sortBy }) {
-  commissionTable.value.loading = true;
-  FakeAPI.fetch({ page, itemsPerPage, sortBy }).then(({ items, total }) => {
-    commissionTable.value.serverItems = items;
-    commissionTable.value.totalItems = total;
-    commissionTable.value.loading = false;
-  });
-}
 </script>

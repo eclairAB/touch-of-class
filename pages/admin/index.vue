@@ -1,18 +1,12 @@
 <template>
   <div class="w-100 h-100 d-flex justify-center align-center px-10">
-    <!-- <div class="w-75"> -->
-      <v-row class="mx-10 px-10"> 
-        <v-col>
-          <v-sheet class="pa-10 align-content-center" border rounded>
-            <commission-card />
-          </v-sheet>
-        </v-col>
-        <v-col>
-          <v-sheet class="pa-10 align-content-center" border rounded>
-            <commission-card />
-          </v-sheet>
-        </v-col>
-      </v-row>
-    <!-- </div> -->
+    <v-row class="mx-10 px-10 ga-5">
+      <div class="flex-grow-1">
+        <payments-card />
+      </div>
+      <div class="">
+        <commission-card />
+      </div>
+    </v-row>
   </div>
 </template>
