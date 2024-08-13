@@ -1,15 +1,27 @@
 <template>
-  <v-card class="mx-auto" flat border max-width="450">
+  <v-card class="mx-aut w-autoo" flat border width="450">
     <v-toolbar color="orange-lighten-4">
       <!-- <v-btn icon="mdi-menu" variant="text"></v-btn> -->
-      <v-toolbar-title>Commissions</v-toolbar-title>
+      <v-toolbar-title><b>Commissions</b></v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-chip class="ma-2" color="black" label>
+          <v-icon icon="mdi-cash-multiple" start></v-icon>
+          2,300
+        </v-chip>
       <v-btn icon="mdi-magnify" variant="text"></v-btn>
     </v-toolbar>
 
     <v-list :items="items" lines="three" item-props>
       <template v-slot:subtitle="{ subtitle }">
-        <div v-html="subtitle"></div>
+        <div v-html="subtitle.label"></div>
+        <v-chip class="ma-2" color="purple" label>
+          <v-icon icon="mdi-cash-multiple" start></v-icon>
+          {{ subtitle.commission }}
+        </v-chip>
+        <v-chip class="ma-2" color="teal" label>
+          <v-icon icon="mdi-content-cut" start></v-icon>
+          {{ subtitle.service }}
+        </v-chip>
       </template>
     </v-list>
   </v-card>
@@ -21,35 +33,52 @@ export default {
       { type: "subheader", title: "Today" },
       {
         prependAvatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-        title: "Brunch this weekend?",
-        subtitle: `<span class="text-primary">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
+        title: "Juan Dela Cruz",
+        subtitle: {
+          label: `<span class="text-primary">Buhangin</span> &mdash; Hair Specialist`,
+          commission: `400`,
+          service: `Haircut`,
+        },
       },
       { type: "divider", inset: true },
       {
         prependAvatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-        title: "Summer BBQ",
-        subtitle: `<span class="text-primary">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend.`,
+        title: "Bernard Bernardo",
+        subtitle: {
+          label: `<span class="text-primary">Obrero</span> &mdash; Hair Specialist`,
+          commission: `600`,
+          service: `Massage`,
+        },
       },
       { type: "divider", inset: true },
       {
         prependAvatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-        title: "Oui oui",
-        subtitle:
-          '<span class="text-primary">Sandra Adams</span> &mdash; Do you have Paris recommendations? Have you ever been?',
+        title: "Maria Clara",
+        subtitle: {
+          label: `<span class="text-primary">Dacudao</span> &mdash; Hair Specialist`,
+          commission: `400`,
+          service: `Haircut`,
+        },
       },
       { type: "divider", inset: true },
       {
         prependAvatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-        title: "Birthday gift",
-        subtitle:
-          '<span class="text-primary">Trevor Hansen</span> &mdash; Have any ideas about what we should get Heidi for her birthday?',
+        title: "Margarette",
+        subtitle: {
+          label: `<span class="text-primary">Buhangin</span> &mdash; Hair Specialist`,
+          commission: `500`,
+          service: `Exfoliate`,
+        },
       },
       { type: "divider", inset: true },
       {
         prependAvatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        title: "Recipe to try",
-        subtitle:
-          '<span class="text-primary">Britta Holt</span> &mdash; We should eat this: Grate, Squash, Corn, and tomatillo Tacos.',
+        title: "Abigail Adam",
+        subtitle: {
+          label: `<span class="text-primary">JP Laurel</span> &mdash; Hair Specialist`,
+          commission: `400`,
+          service: `Haircut`,
+        },
       },
     ],
   }),

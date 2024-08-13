@@ -1,9 +1,9 @@
 <template>
   <v-card class="mx-auto" flat border>
     <v-toolbar color="green-lighten-4">
-      <v-toolbar-title>Service Payments</v-toolbar-title>
+      <v-toolbar-title><b>Service Payments</b></v-toolbar-title>
       <!-- <v-spacer></v-spacer> -->
-      <!-- <v-btn icon="mdi-magnify" variant="text"></v-btn> -->
+      <v-btn icon="mdi-magnify" variant="text"></v-btn>
     </v-toolbar>
     <v-data-table-server
       v-if="commissionTable"
@@ -33,6 +33,8 @@ const commissionTable_ = {
       key: "name",
     },
     { title: "Client Name", key: "calories", align: "end" },
+    { title: "Cashier", key: "iron", align: "end" },
+    { title: "Branch", key: "branch", align: "end" },
     { title: "Payment Type", key: "fat", align: "end" },
     { title: "Reference No.", key: "carbs", align: "end" },
     { title: "Date Time", key: "protein", align: "end" },
