@@ -32,17 +32,17 @@
   </div>
 </template>
 <script setup>
-import { PackageCard, ComboCard } from "#components";
+import { ProductsPackageTab, ProductsComboTab } from "#components";
 
 const components_ = {
-  package: PackageCard,
-  combo: ComboCard,
+  package: ProductsPackageTab,
+  combo: ProductsComboTab,
 };
 
 const tab = useState("tab", () => "tab-1");
 const tabs = useState("tabItem", () => [
   {
-    icon: "mdi-package-variant-closed",
+    icon: "mdi- ",
     text: "Packages",
     value: "tab-1",
     component: "package",

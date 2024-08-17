@@ -20,7 +20,22 @@
 
         <v-btn icon="mdi-magnify"></v-btn>
 
-        <v-btn icon="mdi-dots-vertical"></v-btn>
+        <!-- <v-btn icon="mdi-dots-vertical"></v-btn> -->
+        <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
+            </template>
+
+            <v-list>
+              <v-list-item
+                v-for="(item, i) in menuItem"
+                :key="i"
+                :href="item.value"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
       </template>
     </v-app-bar>
     <v-navigation-drawer
@@ -67,7 +82,12 @@ const items = {
       value: "/admin",
     },
     {
-      icon: "mdi-cog",
+      icon: "mdi-emoticon-happy",
+      title: "Clients",
+      value: "/admin/clients",
+    },
+    {
+      icon: "mdi-hair-dryer",
       title: "Products",
       value: "/admin/products",
     },
@@ -80,5 +100,11 @@ const items = {
     },
   ],
 };
+const menuItem = [
+  {
+    title: 'Log out',
+    value: '/',
+  }
+]
 const drawer = useState("value", () => false);
 </script>
