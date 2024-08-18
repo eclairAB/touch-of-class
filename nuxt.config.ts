@@ -2,6 +2,10 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
   //...
+  target: 'static', // Github pages config
+  app: {
+    baseURL: '/touch-of-class/'
+  },
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   build: {
