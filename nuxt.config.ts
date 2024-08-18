@@ -4,7 +4,8 @@ export default defineNuxtConfig({
   //...
   target: 'static', // Github pages config
   app: {
-    baseURL: '/touch-of-class/'
+    baseURL: '/touch-of-class/',
+    buildAssetsDir: 'assets',
   },
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
