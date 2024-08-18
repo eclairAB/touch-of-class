@@ -33,9 +33,9 @@
         <v-icon icon="mdi-cash-multiple" start></v-icon>
         2,300
       </v-chip>
-      <v-btn icon="mdi-magnify" variant="text"></v-btn>
+      <!-- <v-btn icon="mdi-magnify" variant="text"></v-btn> -->
     </v-toolbar>
-    <v-data-iterator :items="games" :items-per-page="4">
+    <v-data-iterator :items="commissions" :items-per-page="4">
       <!-- <template v-slot:header>
         <v-toolbar class="px-2">
           <v-text-field
@@ -56,7 +56,7 @@
           <v-col dense>
             <v-row v-for="item in items" :key="item.title" cols="auto" md="4">
               <v-card class="d-flex flex-row my-1 w-100" border flat>
-                <v-img :src="item.raw.img" width=""></v-img>
+                <!-- <v-img :src="item.raw.img" width=""></v-img> -->
 
                 <v-col>
                   <v-chip class="ma-2" color="blue" label>
@@ -67,15 +67,17 @@
                     <v-icon icon="mdi-content-cut" start></v-icon>
                     {{ item.raw.stylist }}
                   </v-chip>
-                </v-col>
-                <v-col>
-                  <v-chip class="ma-2" color="purple" label>
-                    <v-icon icon="mdi-cash-multiple" start></v-icon>
-                    {{ item.raw.commission }}
-                  </v-chip>
                   <v-chip class="ma-2" color="orange-darken-3" label>
                     <v-icon icon="mdi-store" start></v-icon>
                     {{ item.raw.branch }}
+                  </v-chip>
+                  <v-chip class="ma-2" color="purple" label>
+                    <v-icon icon="mdi-cash-multiple" start></v-icon>
+                    {{ item.raw.commission }} ({{ item.raw.percentage }}) - {{ item.raw.service }}
+                  </v-chip>
+                  <v-chip class="ma-2" color="red" label>
+                    <v-icon icon="mdi-clock-time-five-outline" start></v-icon>
+                    {{ item.raw.datetime }}
                   </v-chip>
                 </v-col>
 
@@ -134,64 +136,7 @@
   <script>
 export default {
   data: () => ({
-    // items: [
-    //   { type: "subheader", title: "Today" },
-    //   {
-    //     prependAvatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-    //     title: "Juan Dela Cruz",
-    //     subtitle: `<span class="text-primary">Buhangin</span> &mdash; Hair Specialist`
-    //     //  {
-    //     //   label: `<span class="text-primary">Buhangin</span> &mdash; Hair Specialist`,
-    //     //   commission: `400`,
-    //     //   service: `Haircut`,
-    //     // },
-    //   },
-    //   { type: "divider", inset: true },
-    //   {
-    //     prependAvatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-    //     title: "Bernard Bernardo",
-    //     subtitle: `<span class="text-primary">Obrero</span> &mdash; Hair Specialist`
-    //     //  {
-    //     //   label: `<span class="text-primary">Obrero</span> &mdash; Hair Specialist`,
-    //     //   commission: `600`,
-    //     //   service: `Massage`,
-    //     // },
-    //   },
-    //   { type: "divider", inset: true },
-    //   {
-    //     prependAvatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-    //     title: "Maria Clara",
-    //     subtitle: `<span class="text-primary">Dacudao</span> &mdash; Hair Specialist`
-    //     //  {
-    //     //   label: `<span class="text-primary">Dacudao</span> &mdash; Hair Specialist`,
-    //     //   commission: `400`,
-    //     //   service: `Haircut`,
-    //     // },
-    //   },
-    //   { type: "divider", inset: true },
-    //   {
-    //     prependAvatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-    //     title: "Margarette",
-    //     subtitle: `<span class="text-primary">Buhangin</span> &mdash; Hair Specialist`
-    //     //  {
-    //     //   label: `<span class="text-primary">Buhangin</span> &mdash; Hair Specialist`,
-    //     //   commission: `500`,
-    //     //   service: `Exfoliate`,
-    //     // },
-    //   },
-    //   { type: "divider", inset: true },
-    //   {
-    //     prependAvatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-    //     title: "Abigail Adam",
-    //     subtitle: `<span class="text-primary">JP Laurel</span> &mdash; Hair Specialist`
-    //     //  {
-    //     //   label: `<span class="text-primary">JP Laurel</span> &mdash; Hair Specialist`,
-    //     //   commission: `400`,
-    //     //   service: `Haircut`,
-    //     // },
-    //   },
-    // ],
-    games: [
+    commissions: [
       {
         img: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
         client: `Mr. Client`,
@@ -200,7 +145,9 @@ export default {
         profession: `Hair Specialist`,
         stylist: `Juan Dela Cruz`,
         commission: `400`,
-        service: `Haircut`,
+        percentage: `10%`,
+        service: `Gluta drip`,
+        datetime: `01/01/2024 3:00 pm`,
       },
       {
         img: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
@@ -208,9 +155,11 @@ export default {
         duration: "8 minutes",
         branch: `Buhangin`,
         profession: `Hair Specialist`,
-        stylist: `Juan Dela Cruz`,
-        commission: `400`,
+        stylist: `Bernard Bernardo`,
+        commission: `600`,
+        percentage: `7%`,
         service: `Haircut`,
+        datetime: `01/01/2024 3:00 pm`,
       },
       {
         img: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
@@ -218,9 +167,11 @@ export default {
         duration: "8 minutes",
         branch: `Buhangin`,
         profession: `Hair Specialist`,
-        stylist: `Juan Dela Cruz`,
-        commission: `400`,
+        stylist: `Maria Clara`,
+        commission: `300`,
+        percentage: `7%`,
         service: `Haircut`,
+        datetime: `01/01/2024 3:00 pm`,
       },
       {
         img: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
@@ -228,9 +179,11 @@ export default {
         duration: "8 minutes",
         branch: `Buhangin`,
         profession: `Hair Specialist`,
-        stylist: `Juan Dela Cruz`,
-        commission: `400`,
-        service: `Haircut`,
+        stylist: `Margarette`,
+        commission: `500`,
+        percentage: `10%`,
+        service: `Gluta drip`,
+        datetime: `01/01/2024 3:00 pm`,
       },
       {
         img: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
@@ -238,9 +191,11 @@ export default {
         duration: "8 minutes",
         branch: `Buhangin`,
         profession: `Hair Specialist`,
-        stylist: `Juan Dela Cruz`,
+        stylist: `Abigail Adam`,
         commission: `400`,
-        service: `Haircut`,
+        percentage: `10%`,
+        service: `Manicure`,
+        datetime: `01/01/2024 3:00 pm`,
       },
       {
         img: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
@@ -248,9 +203,11 @@ export default {
         duration: "8 minutes",
         branch: `Buhangin`,
         profession: `Hair Specialist`,
-        stylist: `Juan Dela Cruz`,
-        commission: `400`,
+        stylist: `Bernard Bernardo`,
+        commission: `200`,
+        percentage: `10%`,
         service: `Haircut`,
+        datetime: `01/01/2024 3:00 pm`,
       },
       {
         img: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
@@ -258,9 +215,11 @@ export default {
         duration: "8 minutes",
         branch: `Buhangin`,
         profession: `Hair Specialist`,
-        stylist: `Juan Dela Cruz`,
-        commission: `400`,
+        stylist: `Maria Clara`,
+        commission: `600`,
+        percentage: `10%`,
         service: `Haircut`,
+        datetime: `01/01/2024 3:00 pm`,
       },
       {
         img: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
@@ -268,9 +227,11 @@ export default {
         duration: "8 minutes",
         branch: `Buhangin`,
         profession: `Hair Specialist`,
-        stylist: `Juan Dela Cruz`,
+        stylist: `Margarette`,
         commission: `400`,
+        percentage: `10%`,
         service: `Haircut`,
+        datetime: `01/01/2024 3:00 pm`,
       },
     ],
   }),
