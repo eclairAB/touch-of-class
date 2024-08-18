@@ -85,7 +85,7 @@ const items = {
     {
       icon: "mdi-emoticon-happy",
       title: "Clients",
-      value: "/admin/clients",
+      value: "/touch-of-class/admin/clients",
     },
     {
       icon: "mdi-hair-dryer",
@@ -104,7 +104,7 @@ const items = {
 const menuItem = [
   {
     title: 'Log out',
-    value: '/',
+    value: '/touch-of-class/',
   }
 ]
 const drawer = useState("value", () => false);
