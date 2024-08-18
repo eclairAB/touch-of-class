@@ -75,14 +75,12 @@ const username = computed(() => userStore.username);
 //   },
 // ];
 
-console.log(123, route)
-
 const items = {
   admin: [
     {
       icon: "mdi-home",
       title: "Homepage",
-      value: `/admin`,
+      value: `/touch-of-class/admin`,
     },
     {
       icon: "mdi-emoticon-happy",
@@ -92,14 +90,14 @@ const items = {
     {
       icon: "mdi-hair-dryer",
       title: "Products",
-      value: "/admin/products",
+      value: "/touch-of-class/admin/products",
     },
   ],
   cashier: [
     {
       icon: "mdi-home",
       title: "Homepage",
-      value: "/admin",
+      value: "/touch-of-class/admin",
     },
   ],
 };
