@@ -1,0 +1,1 @@
+import{_ as s,v as t,x as n,y as a,a1 as o,t as r,bO as c}from"./kqFGXw0K.js";const u={},i={class:"w-100 h-100 d-flex justify-center align-center"};function l(e,f){return r(),t("div",i,[n("h1",null,a(("useRoute"in e?e.useRoute:o(c))().name),1)])}const d=s(u,[["render",l]]);export{d as default};
