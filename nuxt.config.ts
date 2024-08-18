@@ -7,6 +7,14 @@ export default defineNuxtConfig({
     baseURL: '/touch-of-class/',
     buildAssetsDir: 'assets',
   },
+  router: {
+    options: {
+      mode: 'hash'
+    }
+  },
+  // generate: {
+  //   fallback: true,  // Generate a 404.html file for routing fallback
+  // },
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   build: {
