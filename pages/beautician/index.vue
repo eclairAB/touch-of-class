@@ -10,11 +10,6 @@
           <commission-card2 />
         </div>
       </v-col>
-      <v-col>
-        <div>
-          <clients-pending-services />
-        </div>
-      </v-col>
     </v-row>
   </div>
 </template>
