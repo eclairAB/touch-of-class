@@ -43,8 +43,7 @@
       :location="$vuetify.display.mobile ? 'bottom' : undefined"
       temporary
     >
-      <!-- <v-list :items="items"></v-list> -->
-      <v-list nav :key="index" v-for="(item, index) in items.admin">
+      <v-list nav :key="index" v-for="(item, index) in items[userStore.role]">
         <v-list-item
           :prepend-icon="item.icon"
           :title="item.title"
@@ -61,19 +60,6 @@ import { computed } from "vue";
 const route = useRoute();
 const userStore = useUserStore();
 const username = computed(() => userStore.username);
-
-// const items = [
-//   {
-//     icon: "mdi-home",
-//     title: "Homepage",
-//     value: "/admin",
-//   },
-//   {
-//     icon: "mdi-cog",
-//     title: "Products",
-//     value: "/admin/products",
-//   },
-// ];
 
 const items = {
   admin: [
@@ -97,7 +83,12 @@ const items = {
     {
       icon: "mdi-home",
       title: "Homepage",
-      value: "/touch-of-class/admin",
+      value: "/touch-of-class/cashier",
+    },
+    {
+      icon: "mdi-emoticon-happy",
+      title: "Clients",
+      value: "/touch-of-class/cashier/clients",
     },
   ],
 };

@@ -1,7 +1,17 @@
 <template>
-  <v-card flat border>
+  <v-card flat border class="w-75">
     <v-toolbar color="orange-lighten-4">
-      <v-toolbar-title><b>Clients</b></v-toolbar-title>
+      <v-toolbar-title>
+        <b>Clients</b>
+        <v-btn
+          class="text-none ml-10"
+          size="large"
+          @click="addClient()"
+          variant="tonal"
+        >
+          Add Client
+        </v-btn>
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn icon="mdi-magnify" variant="text"></v-btn>
     </v-toolbar>
@@ -67,31 +77,31 @@
                   <tr align="right">
                     <th>Payment Balances:</th>
 
-                    <td>₱ {{ item.raw.balances }}</td>
+                    <td>₱ {{ item.raw.balances || 0 }}</td>
                   </tr>
 
                   <tr align="right">
                     <th>Pending Sessions:</th>
 
-                    <td>{{ item.raw.pending_sessions }}</td>
+                    <td>{{ item.raw.sessions || 0 }}</td>
                   </tr>
 
                   <tr align="right">
                     <th>Pending Services:</th>
 
-                    <td>{{ item.raw.pending_services }}</td>
+                    <td>{{ item.raw.combo || 0 }}</td>
                   </tr>
 
                   <tr align="right">
                     <th>Loyalty Card 1:</th>
 
-                    <td>{{ item.raw.loyalty_card_1 }} redeemed</td>
+                    <td>{{ item.raw.loyalty_card_1 || 0 }} redeemed</td>
                   </tr>
 
                   <tr align="right">
                     <th>Loyalty Card 2:</th>
 
-                    <td>{{ item.raw.loyalty_card_2 }} redeemed</td>
+                    <td>{{ item.raw.loyalty_card_2 || 0 }} redeemed</td>
                   </tr>
                 </tbody>
               </v-table>
@@ -121,117 +131,57 @@
       </template>
     </v-data-iterator>
     <ClientsSingle />
+    <FormClientDialog />
   </v-card>
 </template>
 <script setup>
+const { $api } = useNuxtApp();
 import { useClientStore } from "@/stores/client";
+import { useFormDialogStore } from "@/stores/formDialog";
 const clientStore = useClientStore();
+const formDialogStore = useFormDialogStore();
 const itemsPerPage = ref(4);
-const clients = ref([
-  {
-    img: "https://bit.ly/4dnXrBi",
-    first_name: "Mr. Client",
-    last_name: "Spender",
-    balances: 0,
-    email: "client@gmail.com",
-    contact: "0987654321",
-    pending_sessions: 4,
-    pending_services: 2,
-    loyalty_card_1: 5,
-    loyalty_card_2: 5,
-  },
-  {
-    img: "https://bit.ly/4dnXrBi",
-    first_name: "Mr. Generous",
-    last_name: "Spender",
-    balances: 5000,
-    email: "client@gmail.com",
-    contact: "0987654321",
-    pending_sessions: 4,
-    pending_services: 2,
-    loyalty_card_1: 5,
-    loyalty_card_2: 5,
-  },
-  {
-    img: "https://cdn.vectorstock.com/i/1000v/82/33/person-gray-photo-placeholder-woman-vector-24138233.jpg",
-    first_name: "Mrs. Ford",
-    last_name: "Spender",
-    balances: 0,
-    email: "client@gmail.com",
-    contact: "0987654321",
-    pending_sessions: 4,
-    pending_services: 2,
-    loyalty_card_1: 5,
-    loyalty_card_2: 5,
-  },
-  {
-    img: "https://bit.ly/4dnXrBi",
-    first_name: "Mr. Zeus",
-    last_name: "Spender",
-    balances: 10000,
-    email: "client@gmail.com",
-    contact: "0987654321",
-    pending_sessions: 4,
-    pending_services: 2,
-    loyalty_card_1: 5,
-    loyalty_card_2: 5,
-  },
-  {
-    img: "https://cdn.vectorstock.com/i/1000v/82/33/person-gray-photo-placeholder-woman-vector-24138233.jpg",
-    first_name: "Mrs. Fashion",
-    last_name: "Spender",
-    balances: 0,
-    email: "client@gmail.com",
-    contact: "0987654321",
-    pending_sessions: 4,
-    pending_services: 2,
-    loyalty_card_1: 5,
-    loyalty_card_2: 5,
-  },
-  {
-    img: "https://bit.ly/4dnXrBi",
-    first_name: "Mr. Client",
-    last_name: "Spender",
-    balances: 0,
-    email: "client@gmail.com",
-    contact: "0987654321",
-    pending_sessions: 4,
-    pending_services: 2,
-    loyalty_card_1: 5,
-    loyalty_card_2: 5,
-  },
-  {
-    img: "https://bit.ly/4dnXrBi",
-    first_name: "Mr. Generous",
-    last_name: "Spender",
-    balances: 5000,
-    email: "client@gmail.com",
-    contact: "0987654321",
-    pending_sessions: 4,
-    pending_services: 2,
-    loyalty_card_1: 5,
-    loyalty_card_2: 5,
-  },
-  {
-    img: "https://cdn.vectorstock.com/i/1000v/82/33/person-gray-photo-placeholder-woman-vector-24138233.jpg",
-    first_name: "Mrs. Ford",
-    last_name: "Spender",
-    balances: 0,
-    email: "client@gmail.com",
-    contact: "0987654321",
-    pending_sessions: 4,
-    pending_services: 2,
-    loyalty_card_1: 5,
-    loyalty_card_2: 5,
-  },
-]);
+const clients = ref([]);
 
 const onClickSeeAll = () => {
   itemsPerPage.value = itemsPerPage.value === 4 ? clients.value.length : 4;
 };
 
+const fetchUserData = async () => {
+  try {
+    const response = await $api.get(`/clients/`);
+    let userArray = response.data;
+
+    for (let id in userArray) {
+      let _combo = 0;
+      let _session = 0;
+      let _balance = 0;
+
+      if (userArray[id].appointments) {
+        for (let appointment of userArray[id].appointments) {
+          if (appointment.combo) _combo++;
+          if (appointment.package) _session++;
+        }
+      }
+
+      userArray[id].img = "https://bit.ly/4dnXrBi";
+      userArray[id].combo = _combo;
+      userArray[id].session = _session;
+    }
+
+    clients.value = response.data;
+  } catch (error) {
+    console.error("Failed to fetch user data:", error);
+  }
+};
+fetchUserData();
+
 function moreInfoClicked(client) {
   // console.log(clientStore);
   clientStore.setClient(client);
+}
+
+function addClient() {
+  formDialogStore.setClient(true);
 }
 </script>

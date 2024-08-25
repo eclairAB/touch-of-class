@@ -38,7 +38,7 @@
               class="text-none mx-2"
               color="#c6811b"
               size="large"
-              @click="loginClicked('/admin')"
+              @click="loginClicked('admin')"
               prepend-icon="mdi-key"
               variant="tonal"
             >
@@ -48,7 +48,7 @@
               class="text-none mx-2"
               color="#c6811b"
               size="large"
-              @click="loginClicked('/cashier')"
+              @click="loginClicked('cashier')"
               prepend-icon="mdi-key"
               variant="tonal"
             >
@@ -58,7 +58,7 @@
               class="text-none mt-3"
               color="#c6811b"
               size="large"
-              @click="loginClicked('/beautician')"
+              @click="loginClicked('beautician')"
               prepend-icon="mdi-key"
               variant="tonal"
             >
@@ -79,6 +79,7 @@ const visible = useState('value', () => { false });
 
 function loginClicked(route) {
   userStore.setUsername(form.username);
-  navigateTo(route);
+  userStore.setRole(route);
+  navigateTo(`/${route}`);
 }
 </script>

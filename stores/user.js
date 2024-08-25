@@ -1,12 +1,19 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore("user", {
+  persist: true,
   state: () => ({
-    username: '',
+    username: "",
+    // role: localStorage.getItem("role") || "",
+    role: "",
   }),
   actions: {
     setUsername(username) {
-      this.username = username
+      this.username = username;
+    },
+    setRole(role) {
+      this.role = role;
+      // localStorage.setItem("role", role);
     },
   },
-})
+});

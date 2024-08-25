@@ -12,6 +12,12 @@ export default defineNuxtConfig({
       mode: 'hash'
     }
   },
+  runtimeConfig: {
+    public: {
+      // apiBaseUrl: process.env.API_BASE_URL || 'https://your-laravel-backend.com/api',
+      apiBaseUrl: 'http://localhost/api',
+    }
+  },
   generate: {
     fallback: true,  // Generate a 404.html file for routing fallback
   },

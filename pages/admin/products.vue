@@ -42,7 +42,7 @@ const components_ = {
 const tab = useState("tab", () => "tab-1");
 const tabs = useState("tabItem", () => [
   {
-    icon: "mdi- ",
+    icon: "mdi-package-variant-closed",
     text: "Packages",
     value: "tab-1",
     component: "package",
