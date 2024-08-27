@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-app>
+      <AlertNotification />
       <TopMenu />
       <NuxtRouteAnnouncer />
       <NuxtPage />

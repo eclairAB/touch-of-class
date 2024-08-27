@@ -2,8 +2,18 @@ import { defineStore } from "pinia";
 
 export const useFormDialogStore = defineStore("formDialog", {
   state: () => ({
-    client: false,
-    appointment: false,
+    client: {
+      dialog: false,
+      payload: {},
+    },
+    appointment: {
+      dialog: false,
+      payload: {},
+    },
+    package: {
+      dialog: false,
+      payload: {},
+    },
   }),
   actions: {
     setClient(state) {
@@ -11,6 +21,9 @@ export const useFormDialogStore = defineStore("formDialog", {
     },
     setAppointment(state) {
       this.appointment = state;
+    },
+    setPackage(state) {
+      this.package = state;
     },
   },
 });

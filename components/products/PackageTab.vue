@@ -1,132 +1,148 @@
 <template>
-  <v-data-iterator :items="desserts" item-value="name">
-    <template v-slot:default="{ items, isExpanded, toggleExpand }">
-      <v-row>
-        <v-col
-          v-for="item in items"
-          :key="item.raw.name"
-          cols="12"
-          md="6"
-          sm="12"
+  <div>
+    <v-data-iterator
+      class="px-5"
+      :items="packages"
+      :items-per-page="itemsPerPage"
+    >
+      <template v-slot:header="{ page, pageCount, prevPage, nextPage }">
+        <h1
+          class="text-h4 font-weight-bold d-flex justify-space-between mb-4 align-center"
         >
-          <v-card>
-            <v-card-title class="d-flex align-center">
-              <v-icon
-                :color="item.raw.color"
-                :icon="item.raw.icon"
-                size="18"
-                start
-              ></v-icon>
+          <div class="text-truncate">Packages</div>
+          <v-btn
+            class="text-none ml-10"
+            size="large"
+            @click="addPackage()"
+            variant="tonal"
+          >
+            Add Package
+          </v-btn>
+          <v-spacer></v-spacer>
+          <div class="d-flex align-center">
+            <v-btn class="me-8" variant="text" @click="onClickSeeAll">
+              <span class="text-decoration-underline text-none">See all</span>
+            </v-btn>
 
-              <h4>{{ item.raw.name }}</h4>
-            </v-card-title>
+            <div class="d-inline-flex">
+              <v-btn
+                :disabled="page === 1"
+                class="me-2"
+                icon="mdi-arrow-left"
+                size="small"
+                variant="tonal"
+                @click="prevPage"
+              ></v-btn>
 
-            <v-card-text>
-              {{ item.raw.description }}
-            </v-card-text>
-
-            <div class="px-4">
-              <v-switch
-                :label="`${isExpanded(item) ? 'Hide' : 'Show'} details`"
-                :model-value="isExpanded(item)"
-                density="compact"
-                inset
-                @click="() => toggleExpand(item)"
-              ></v-switch>
+              <v-btn
+                :disabled="page === pageCount"
+                icon="mdi-arrow-right"
+                size="small"
+                variant="tonal"
+                @click="nextPage"
+              ></v-btn>
             </div>
+          </div>
+        </h1>
+      </template>
 
-            <v-divider></v-divider>
+      <template v-slot:default="{ items }">
+        <v-row>
+          <v-col v-for="(item, i) in items" :key="i" cols="12" sm="6" xl="3">
+            <v-sheet border>
+              <v-list-item title="Name" density="comfortable" lines="two">
+                <template v-slot:title>
+                  <strong class="text-h6">
+                    {{ item.raw.name }}
+                  </strong>
+                </template>
+              </v-list-item>
 
-            <v-expand-transition>
-              <div v-if="isExpanded(item)">
-                <v-list :items="services" :lines="true" density="compact">
-                  <!-- <v-list-item active> -->
-                  <template v-slot:title="{ title }">
-                    {{ title.service }}
-                    <v-chip class="ma-2" color="purple" label>
-                      <v-icon icon="mdi-cash-multiple" start></v-icon>
-                      {{ title.commission }}
-                    </v-chip>
-                    <v-chip class="ma-2" color="blue" label>
-                      <v-icon icon="mdi-pencil" start></v-icon>
-                      Edit Commission Percentage
-                    </v-chip>
-                  </template>
-                  <!-- </v-list-item> -->
-                </v-list>
-              </div>
-            </v-expand-transition>
-          </v-card>
-        </v-col>
-      </v-row>
-    </template>
-  </v-data-iterator>
+              <v-table class="text-caption" density="compact">
+                <tbody>
+                  <tr align="right">
+                    <th>Total Sessions:</th>
+
+                    <td>{{ item.raw.sessions || 0 }}</td>
+                  </tr>
+
+                  <tr align="right">
+                    <th>Stylist Commission:</th>
+
+                    <td>{{ item.raw.sessions || 0 }}%</td>
+                  </tr>
+
+                  <tr align="right">
+                    <th>Price:</th>
+
+                    <td>₱ {{ item.raw.price || 0 }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+              <v-btn
+                flat
+                color="grey-lighten-3"
+                class="text-none"
+                block
+                @click="editClicked(item.raw)"
+              >
+                Edit
+              </v-btn>
+            </v-sheet>
+          </v-col>
+        </v-row>
+      </template>
+
+      <template v-slot:footer="{ page, pageCount }">
+        <v-footer
+          class="justify-space-between text-body-2 mt-4"
+          color="surface-variant"
+        >
+          Total packages: {{ packages.length }}
+
+          <div>Page {{ page }} of {{ pageCount }}</div>
+        </v-footer>
+      </template>
+    </v-data-iterator>
+    <FormPackageDialog @exitDialog="exitDialog" />
+  </div>
 </template>
-<script>
-export default {
-  data: () => ({
-    desserts: [
-      {
-        name: "Beauty Package",
-        description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum quia unde atque natus ea mollitia ratione eaque et, hic, adipisci cumque ut. Quia accusamus, id inventore facilis aspernatur qui eveniet.",
-        icon: "mdi-face-woman-shimmer",
-        color: "#6EC1E4",
-      },
-      {
-        name: "Exfoliate Package",
-        description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum quia unde atque natus ea mollitia ratione eaque et, hic, adipisci cumque ut. Quia accusamus, id inventore facilis aspernatur qui eveniet.",
-        icon: "mdi-lotion-outline",
-        color: "#F4A261",
-      },
-      {
-        name: "Massage Package",
-        description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum quia unde atque natus ea mollitia ratione eaque et, hic, adipisci cumque ut. Quia accusamus, id inventore facilis aspernatur qui eveniet.",
-        icon: "mdi-hand-water",
-        color: "#6D4C41",
-      },
-      {
-        name: "All-in-one Package",
-        description:
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum quia unde atque natus ea mollitia ratione eaque et, hic, adipisci cumque ut. Quia accusamus, id inventore facilis aspernatur qui eveniet.",
-        color: "#FFADAD",
-        icon: "mdi-package-variant-closed",
-      },
-    ],
-    services: [
-      {
-        title: {
-          service: "🟡  Service 1:",
-          commission: "10%",
-        },
-      },
-      {
-        title: {
-          service: "🟡  Service 2:",
-          commission: "20%",
-        },
-      },
-      {
-        title: {
-          service: "🟡  Service 3:",
-          commission: "7%",
-        },
-      },
-      {
-        title: {
-          service: "🟡  Service 4:",
-          commission: "5%",
-        },
-      },
-      {
-        title: {
-          service: "🟡  Service 5:",
-          commission: "10%",
-        },
-      },
-    ],
-  }),
+<script setup>
+const { $api } = useNuxtApp();
+import { useFormDialogStore } from "@/stores/formDialog";
+import { useAlertStore } from "@/stores/alertDialog";
+const formDialogStore = useFormDialogStore();
+const alertDialog = useAlertStore();
+const itemsPerPage = ref(4);
+const packages = ref([]);
+
+const onClickSeeAll = () => {
+  itemsPerPage.value = itemsPerPage.value === 4 ? packages.value.length : 4;
 };
+
+const fetchPackageData = async () => {
+  try {
+    const response = await $api.get(`/packages/`);
+
+    packages.value = response.data;
+  } catch (error) {
+    alertDialog.setClient({
+      show: true,
+      color: "error",
+      content: "Failed to fetch Packages.",
+    });
+  }
+};
+fetchPackageData();
+
+function editClicked(client) {
+  formDialogStore.setPackage({ dialog: true, payload: client });
+}
+
+function addPackage() {
+  formDialogStore.setPackage({ dialog: true });
+}
+function exitDialog() {
+  fetchPackageData();
+}
 </script>

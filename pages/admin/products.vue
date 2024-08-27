@@ -2,7 +2,7 @@
   <div class="w-100 h-100 d-flex justify-center align-center px-10">
     <v-col>
       <v-row class="mx-10 px-10 ga-5 d-flex justify-center align-center">
-        <v-sheet color="orange-lighten-4" border rounded="lg">
+        <v-sheet color="orange-lighten-4" border rounded="lg" class="w-75">
           <v-tabs
             v-model="tab"
             :items="tabs"
@@ -32,15 +32,16 @@
   </div>
 </template>
 <script setup>
-import { ProductsPackageTab, ProductsComboTab } from "#components";
+import { ProductsPackageTab, ProductsComboTab, ProductsServiceTab } from "#components";
 
 const components_ = {
   package: ProductsPackageTab,
   combo: ProductsComboTab,
+  service: ProductsServiceTab,
 };
 
-const tab = useState("tab", () => "tab-1");
-const tabs = useState("tabItem", () => [
+const tab = ref("tab-1");
+const tabs = ref([
   {
     icon: "mdi-package-variant-closed",
     text: "Packages",
@@ -49,9 +50,15 @@ const tabs = useState("tabItem", () => [
   },
   {
     icon: "mdi-shopping",
-    text: "Bundles",
+    text: "Combo",
     value: "tab-2",
     component: "combo",
+  },
+  {
+    icon: "mdi-shopping",
+    text: "Services",
+    value: "tab-2",
+    component: "service",
   },
 ]);
 

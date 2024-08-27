@@ -20,27 +20,26 @@
 
         <v-btn icon="mdi-magnify"></v-btn>
 
-        <!-- <v-btn icon="mdi-dots-vertical"></v-btn> -->
         <v-menu>
-            <template v-slot:activator="{ props }">
-              <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
-            </template>
+          <template v-slot:activator="{ props }">
+            <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
+          </template>
 
-            <v-list>
-              <v-list-item
-                v-for="(item, i) in menuItem"
-                :key="i"
-                :href="item.value"
-              >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <v-list>
+            <v-list-item
+              v-for="(item, i) in menuItem"
+              :key="i"
+              :href="item.value"
+            >
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
     </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
-      :location="$vuetify.display.mobile ? 'bottom' : undefined"
+      :location="$vuetify.display.mobile ? 'left' : undefined"
       temporary
     >
       <v-list nav :key="index" v-for="(item, index) in items[userStore.role]">
@@ -61,7 +60,7 @@ const route = useRoute();
 const userStore = useUserStore();
 const username = computed(() => userStore.username);
 
-const items = {
+const items = ref({
   admin: [
     {
       icon: "mdi-home",
@@ -91,12 +90,12 @@ const items = {
       value: "/touch-of-class/cashier/clients",
     },
   ],
-};
+});
 const menuItem = [
   {
-    title: 'Log out',
-    value: '/touch-of-class/',
-  }
-]
+    title: "Log out",
+    value: "/touch-of-class/",
+  },
+];
 const drawer = useState("value", () => false);
 </script>

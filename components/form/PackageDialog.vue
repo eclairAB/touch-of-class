@@ -1,17 +1,18 @@
 <template>
   <div class="text-center">
     <v-dialog
-      v-model="formDialog.client.dialog"
+      v-model="formDialog.package.dialog"
       width="auto"
+      @afterEnter="dialogOpens"
       @afterLeave="closeDialog"
     >
       <v-card
         class="px-5 pb-4"
         width="700"
         max-width="700"
-        prepend-icon="mdi-account"
+        prepend-icon="mdi-package-variant-closed"
         text=""
-        title="Client Information"
+        title="Package Information"
         flat
       >
         <v-skeleton-loader
@@ -26,9 +27,9 @@
             <v-row>
               <v-col cols="12" md="6">
                 <v-text-field
-                  v-model="form.first_name"
+                  v-model="form.name"
                   :counter="10"
-                  label="First name"
+                  label="Package Name"
                   hide-details
                   variant="outlined"
                   required
@@ -37,9 +38,9 @@
 
               <v-col cols="12" md="6">
                 <v-text-field
-                  v-model="form.last_name"
+                  v-model="form.sessions"
                   :counter="10"
-                  label="Last name"
+                  label="Sessions"
                   hide-details
                   variant="outlined"
                   required
@@ -47,8 +48,8 @@
               </v-col>
               <v-col cols="12" md="6">
                 <v-text-field
-                  v-model="form.email"
-                  label="E-mail"
+                  v-model="form.commission_percentage"
+                  label="Commission Percentage"
                   hide-details
                   variant="outlined"
                   required
@@ -56,8 +57,8 @@
               </v-col>
               <v-col cols="12" md="6">
                 <v-text-field
-                  v-model="form.contact_number"
-                  label="Contact Number"
+                  v-model="form.price"
+                  label="Price"
                   hide-details
                   variant="outlined"
                   required
@@ -67,6 +68,17 @@
           </v-container>
         </v-form>
         <template v-slot:actions>
+          <v-btn
+            v-if="!create_mode"
+            class="text-none"
+            color="red"
+            size="large"
+            @click="deleteAction"
+            variant="tonal"
+          >
+            {{ delete_confirmed ? "Click again to confirm" : "Delete Package" }}
+          </v-btn>
+          <v-spacer />
           <v-btn
             class="text-none"
             color="red"
@@ -94,6 +106,7 @@
 const { $api } = useNuxtApp();
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
+
 const formDialog = useFormDialogStore();
 const alertDialog = useAlertStore();
 const emit = defineEmits(["exitDialog"]);
@@ -101,27 +114,44 @@ const emit = defineEmits(["exitDialog"]);
 // Form
 const form = ref({});
 const form_validate = ref(false);
+const create_mode = ref(true);
+const delete_confirmed = ref(false);
 
 function submit() {
-  createClient();
+  if (create_mode.value) {
+    createPackage();
+  } else {
+    updatePackage();
+  }
+}
+function dialogOpens() {
+  if (formDialog.package.payload) {
+    form.value = formDialog.package.payload;
+    create_mode.value = false;
+  } else {
+    form.value = {};
+    create_mode.value = true;
+  }
 }
 function closeDialog() {
-  let emit_counter = 0;
-  if (emit_counter < 1) {
-    emit("exitDialog", emit_counter);
-    emit_counter++;
-  }
+  emit("exitDialog");
 
-  formDialog.setClient({ dialog: false });
+  formDialog.setPackage({ dialog: false });
 }
-const createClient = async () => {
+function deleteAction() {
+  if (delete_confirmed.value) {
+    deletePackage();
+  } else {
+    delete_confirmed.value = true;
+  }
+}
+const createPackage = async () => {
   try {
-    const response = await $api.post(`/clients/`, form.value);
-
+    const response = await $api.post(`/packages/`, form.value);
     alertDialog.setClient({
       show: true,
       color: "success",
-      content: "New Client Created!",
+      content: "New Package Created!",
     });
     closeDialog();
   } catch (error) {
@@ -129,8 +159,46 @@ const createClient = async () => {
     alertDialog.setClient({
       show: true,
       color: "error",
-      content: "Failed to create Client.",
+      content: "Failed to create Package.",
     });
+  }
+};
+const updatePackage = async () => {
+  try {
+    const response = await $api.put(`/packages/${form.value.id}`, form.value);
+    alertDialog.setClient({
+      show: true,
+      color: "success",
+      content: "Package Updated!",
+    });
+    closeDialog();
+  } catch (error) {
+    // console.error("Failed to create client data:", error);
+    alertDialog.setClient({
+      show: true,
+      color: "error",
+      content: "Failed to Update Package.",
+    });
+  }
+};
+const deletePackage = async () => {
+  try {
+    const response = await $api.delete(`/packages/${form.value.id}`);
+    alertDialog.setClient({
+      show: true,
+      color: "success",
+      content: "Package Deleted!",
+    });
+    delete_confirmed.value = false;
+    closeDialog();
+  } catch (error) {
+    // console.error("Failed to create client data:", error);
+    alertDialog.setClient({
+      show: true,
+      color: "error",
+      content: "Failed to Delete Package.",
+    });
+    delete_confirmed.value = false;
   }
 };
 </script>

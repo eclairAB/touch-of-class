@@ -131,7 +131,7 @@
       </template>
     </v-data-iterator>
     <ClientsSingle />
-    <FormClientDialog />
+    <FormClientDialog @exitDialog="exitDialog" />
   </v-card>
 </template>
 <script setup>
@@ -182,6 +182,9 @@ function moreInfoClicked(client) {
 }
 
 function addClient() {
-  formDialogStore.setClient(true);
+  formDialogStore.setClient({ dialog: true });
+}
+function exitDialog(emit_counter) {
+  fetchUserData();
 }
 </script>
