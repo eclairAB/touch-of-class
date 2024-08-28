@@ -5,13 +5,13 @@ export const useAlertStore = defineStore("alert", {
     alert: {},
   }),
   actions: {
-    setClient(alert) {
+    setAlert(alert) {
       this.alert = alert;
       setTimeout(() => {
-        this.clearClient()    
+        this.hideAlert()    
       }, 5000);
     },
-    clearClient() {
+    hideAlert() {
       this.alert = {};
     },
   },

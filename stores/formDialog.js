@@ -14,6 +14,10 @@ export const useFormDialogStore = defineStore("formDialog", {
       dialog: false,
       payload: {},
     },
+    service: {
+      dialog: false,
+      payload: {},
+    },
   }),
   actions: {
     setClient(state) {
@@ -24,6 +28,9 @@ export const useFormDialogStore = defineStore("formDialog", {
     },
     setPackage(state) {
       this.package = state;
+    },
+    setService(state) {
+      this.service = state;
     },
   },
 });

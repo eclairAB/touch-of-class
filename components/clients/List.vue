@@ -110,7 +110,7 @@
                 color="grey-lighten-3"
                 class="text-none"
                 block
-                @click="moreInfoClicked(item.raw)"
+                @click="editClicked(item.raw)"
               >
                 More info
               </v-btn>
@@ -136,9 +136,7 @@
 </template>
 <script setup>
 const { $api } = useNuxtApp();
-import { useClientStore } from "@/stores/client";
 import { useFormDialogStore } from "@/stores/formDialog";
-const clientStore = useClientStore();
 const formDialogStore = useFormDialogStore();
 const itemsPerPage = ref(4);
 const clients = ref([]);
@@ -176,9 +174,8 @@ const fetchUserData = async () => {
 };
 fetchUserData();
 
-function moreInfoClicked(client) {
-  // console.log(clientStore);
-  clientStore.setClient(client);
+function editClicked(client) {
+  formDialogStore.setClient({ dialog: true, payload: client });
 }
 
 function addClient() {

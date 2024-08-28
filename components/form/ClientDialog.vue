@@ -3,6 +3,7 @@
     <v-dialog
       v-model="formDialog.client.dialog"
       width="auto"
+      @afterEnter="dialogOpens"
       @afterLeave="closeDialog"
     >
       <v-card
@@ -68,6 +69,17 @@
         </v-form>
         <template v-slot:actions>
           <v-btn
+            v-if="!create_mode"
+            class="text-none"
+            color="red"
+            size="large"
+            @click="deleteAction"
+            variant="tonal"
+          >
+            {{ delete_confirmed ? "Click again to confirm" : "Delete Client" }}
+          </v-btn>
+          <v-spacer />
+          <v-btn
             class="text-none"
             color="red"
             size="large"
@@ -101,24 +113,41 @@ const emit = defineEmits(["exitDialog"]);
 // Form
 const form = ref({});
 const form_validate = ref(false);
+const create_mode = ref(true);
+const delete_confirmed = ref(false);
 
 function submit() {
-  createClient();
+  if (create_mode.value) {
+    createClient();
+  } else {
+    updateClient();
+  }
+}
+function dialogOpens() {
+  if (formDialog.client.payload) {
+    form.value = formDialog.client.payload;
+    create_mode.value = false;
+  } else {
+    form.value = {};
+    create_mode.value = true;
+  }
 }
 function closeDialog() {
-  let emit_counter = 0;
-  if (emit_counter < 1) {
-    emit("exitDialog", emit_counter);
-    emit_counter++;
-  }
-
+  emit("exitDialog");
   formDialog.setClient({ dialog: false });
+}
+function deleteAction() {
+  if (delete_confirmed.value) {
+    deleteClient();
+  } else {
+    delete_confirmed.value = true;
+  }
 }
 const createClient = async () => {
   try {
     const response = await $api.post(`/clients/`, form.value);
 
-    alertDialog.setClient({
+    alertDialog.setAlert({
       show: true,
       color: "success",
       content: "New Client Created!",
@@ -126,10 +155,48 @@ const createClient = async () => {
     closeDialog();
   } catch (error) {
     // console.error("Failed to create client data:", error);
-    alertDialog.setClient({
+    alertDialog.setAlert({
       show: true,
       color: "error",
       content: "Failed to create Client.",
+    });
+  }
+};
+const updateClient = async () => {
+  try {
+    const response = await $api.put(`/clients/${form.value.id}`, form.value);
+
+    alertDialog.setAlert({
+      show: true,
+      color: "success",
+      content: "Client Updated!",
+    });
+    closeDialog();
+  } catch (error) {
+    // console.error("Failed to create client data:", error);
+    alertDialog.setAlert({
+      show: true,
+      color: "error",
+      content: "Failed to Update Client.",
+    });
+  }
+};
+const deleteClient = async () => {
+  try {
+    const response = await $api.delete(`/clients/${form.value.id}`);
+
+    alertDialog.setAlert({
+      show: true,
+      color: "success",
+      content: "Client Deleted!",
+    });
+    closeDialog();
+  } catch (error) {
+    // console.error("Failed to create client data:", error);
+    alertDialog.setAlert({
+      show: true,
+      color: "error",
+      content: "Failed to Delete Client.",
     });
   }
 };

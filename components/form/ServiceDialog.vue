@@ -1,7 +1,7 @@
 <template>
   <div class="text-center">
     <v-dialog
-      v-model="formDialog.package.dialog"
+      v-model="formDialog.service.dialog"
       width="auto"
       @afterEnter="dialogOpens"
       @afterLeave="closeDialog"
@@ -12,28 +12,17 @@
         max-width="700"
         prepend-icon="mdi-package-variant-closed"
         text=""
-        title="Package Information"
+        title="Service Information"
         flat
       >
         <v-form v-model="form_validate">
           <v-container>
             <v-row>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="12">
                 <v-text-field
                   v-model="form.name"
                   :counter="10"
-                  label="Package Name"
-                  hide-details
-                  variant="outlined"
-                  required
-                ></v-text-field>
-              </v-col>
-
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="form.sessions"
-                  :counter="10"
-                  label="Sessions"
+                  label="Service Name"
                   hide-details
                   variant="outlined"
                   required
@@ -69,7 +58,7 @@
             @click="deleteAction"
             variant="tonal"
           >
-            {{ delete_confirmed ? "Click again to confirm" : "Delete Package" }}
+            {{ delete_confirmed ? "Click again to confirm" : "Delete Service" }}
           </v-btn>
           <v-spacer />
           <v-btn
@@ -95,7 +84,7 @@
     </v-dialog>
   </div>
 </template>
-<script setup>
+  <script setup>
 const { $api } = useNuxtApp();
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
@@ -112,14 +101,14 @@ const delete_confirmed = ref(false);
 
 function submit() {
   if (create_mode.value) {
-    createPackage();
+    createService();
   } else {
-    updatePackage();
+    updateService();
   }
 }
 function dialogOpens() {
-  if (formDialog.package.payload) {
-    form.value = formDialog.package.payload;
+  if (formDialog.service.payload) {
+    form.value = formDialog.service.payload;
     create_mode.value = false;
   } else {
     form.value = {};
@@ -129,22 +118,22 @@ function dialogOpens() {
 function closeDialog() {
   emit("exitDialog");
 
-  formDialog.setPackage({ dialog: false });
+  formDialog.setService({ dialog: false });
 }
 function deleteAction() {
   if (delete_confirmed.value) {
-    deletePackage();
+    deleteService();
   } else {
     delete_confirmed.value = true;
   }
 }
-const createPackage = async () => {
+const createService = async () => {
   try {
-    const response = await $api.post(`/packages/`, form.value);
+    const response = await $api.post(`/services/`, form.value);
     alertDialog.setAlert({
       show: true,
       color: "success",
-      content: "New Package Created!",
+      content: "New Service Created!",
     });
     closeDialog();
   } catch (error) {
@@ -152,17 +141,17 @@ const createPackage = async () => {
     alertDialog.setAlert({
       show: true,
       color: "error",
-      content: "Failed to create Package.",
+      content: "Failed to create Service.",
     });
   }
 };
-const updatePackage = async () => {
+const updateService = async () => {
   try {
-    const response = await $api.put(`/packages/${form.value.id}`, form.value);
+    const response = await $api.put(`/services/${form.value.id}`, form.value);
     alertDialog.setAlert({
       show: true,
       color: "success",
-      content: "Package Updated!",
+      content: "Service Updated!",
     });
     closeDialog();
   } catch (error) {
@@ -170,17 +159,17 @@ const updatePackage = async () => {
     alertDialog.setAlert({
       show: true,
       color: "error",
-      content: "Failed to Update Package.",
+      content: "Failed to Update Service.",
     });
   }
 };
-const deletePackage = async () => {
+const deleteService = async () => {
   try {
-    const response = await $api.delete(`/packages/${form.value.id}`);
+    const response = await $api.delete(`/services/${form.value.id}`);
     alertDialog.setAlert({
       show: true,
       color: "success",
-      content: "Package Deleted!",
+      content: "Service Deleted!",
     });
     delete_confirmed.value = false;
     closeDialog();
@@ -189,9 +178,10 @@ const deletePackage = async () => {
     alertDialog.setAlert({
       show: true,
       color: "error",
-      content: "Failed to Delete Package.",
+      content: "Failed to Delete Service.",
     });
     delete_confirmed.value = false;
   }
 };
 </script>
+  

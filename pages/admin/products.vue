@@ -57,7 +57,7 @@ const tabs = ref([
   {
     icon: "mdi-shopping",
     text: "Services",
-    value: "tab-2",
+    value: "tab-3",
     component: "service",
   },
 ]);

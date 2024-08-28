@@ -126,7 +126,7 @@ const fetchPackageData = async () => {
 
     packages.value = response.data;
   } catch (error) {
-    alertDialog.setClient({
+    alertDialog.setAlert({
       show: true,
       color: "error",
       content: "Failed to fetch Packages.",
@@ -135,8 +135,8 @@ const fetchPackageData = async () => {
 };
 fetchPackageData();
 
-function editClicked(client) {
-  formDialogStore.setPackage({ dialog: true, payload: client });
+function editClicked(payload) {
+  formDialogStore.setPackage({ dialog: true, payload: payload });
 }
 
 function addPackage() {
