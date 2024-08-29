@@ -142,19 +142,6 @@
                   <h4>₱ {{ formatNumber(form.amount_paid) }}</h4>
                 </span>
               </div>
-              <!-- <v-sheet v-if="form.payment_type == 'Cash'">
-                <v-divider
-                  :thickness="2"
-                  class="border-opacity-25 my-2"
-                ></v-divider>
-                <div class="d-flex justify-end font-weight-bold">
-                  <span> Change </span>
-                  <v-spacer></v-spacer>
-                  <span>
-                    <h4>₱ {{ formatNumber(grandTotal() - form.amount_paid) }}</h4>
-                  </span>
-                </div>
-              </v-sheet> -->
             </v-sheet>
           </v-col>
           <v-col>

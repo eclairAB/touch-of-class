@@ -16,9 +16,9 @@
       </v-app-bar-title>
 
       <template v-slot:append>
-        <v-btn icon="mdi-heart"></v-btn>
+        <v-btn :icon="theme.global.current.value.dark ? 'mdi-white-balance-sunny' : 'mdi-moon-waning-crescent'" @click="toggleTheme"></v-btn>
 
-        <v-btn icon="mdi-magnify"></v-btn>
+        <!-- <v-btn icon="mdi-magnify"></v-btn> -->
 
         <v-menu>
           <template v-slot:activator="{ props }">
@@ -55,10 +55,13 @@
 <script setup>
 import { useUserStore } from "@/stores/user";
 import { computed } from "vue";
+import { useTheme } from 'vuetify'
+
 
 const route = useRoute();
 const userStore = useUserStore();
 const username = computed(() => userStore.username);
+const theme = useTheme()
 
 const items = ref({
   admin: [
@@ -98,4 +101,9 @@ const menuItem = [
   },
 ];
 const drawer = useState("value", () => false);
+
+
+function toggleTheme () {
+  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+}
 </script>
