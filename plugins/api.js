@@ -13,7 +13,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Optionally, add interceptors
   apiClient.interceptors.request.use((config) => {
-    console.log('Request:', config)
     // const token = nuxtApp.$pinia.get('auth').token
     // if (token) {
     //   config.headers.Authorization = `Bearer ${token}`
@@ -24,10 +23,8 @@ export default defineNuxtPlugin((nuxtApp) => {
   })
 
   apiClient.interceptors.response.use((response) => {
-    console.log('Response:', response)
     return response
   }, (error) => {
-    console.error('Response error:', error)
     return Promise.reject(error)
   })
 

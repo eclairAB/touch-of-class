@@ -181,7 +181,7 @@ function editClicked(client) {
 function addClient() {
   formDialogStore.setClient({ dialog: true });
 }
-function exitDialog(emit_counter) {
+function exitDialog() {
   fetchUserData();
 }
 </script>

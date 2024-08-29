@@ -114,7 +114,7 @@
     itemsPerPage.value = itemsPerPage.value === 4 ? services.value.length : 4;
   };
   
-  const fetchPackageData = async () => {
+  const fetchServiceData = async () => {
     try {
       const response = await $api.get(`/services/`);
   
@@ -127,7 +127,7 @@
       });
     }
   };
-  fetchPackageData();
+  fetchServiceData();
   
   function editClicked(payload) {
     formDialogStore.setService({ dialog: true, payload: payload });
@@ -137,7 +137,7 @@
     formDialogStore.setService({ dialog: true });
   }
   function exitDialog() {
-    fetchPackageData();
+    fetchServiceData();
   }
   </script>
   
