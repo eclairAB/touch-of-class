@@ -63,7 +63,7 @@
                     <tr align="right">
                       <th>Stylist Commission:</th>
   
-                      <td>{{ item.raw.sessions || 0 }}%</td>
+                      <td>{{ item.raw.commission_percentage || 0 }}%</td>
                     </tr>
   
                     <tr align="right">

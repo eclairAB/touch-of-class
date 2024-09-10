@@ -134,6 +134,7 @@ function dialogOpens() {
 }
 function closeDialog() {
   emit("exitDialog");
+  delete_confirmed.value = false;
   formDialog.setClient({ dialog: false });
 }
 function deleteAction() {

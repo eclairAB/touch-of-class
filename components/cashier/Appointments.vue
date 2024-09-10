@@ -27,11 +27,25 @@
         </v-row>
         <v-row class="ga-3">
           <v-combobox
-            v-model="form.package"
+            v-model="form.packages"
             :items="packages"
             chips
             multiple
             label="Select Packages"
+            density="comfortable"
+            variant="outlined"
+            item-title="name"
+            clearable
+            @update:modelValue="form.amount_paid = grandTotal() / 2"
+          ></v-combobox>
+        </v-row>
+        <v-row class="ga-3">
+          <v-combobox
+            v-model="form.combos"
+            :items="combos"
+            chips
+            multiple
+            label="Select Combos"
             density="comfortable"
             variant="outlined"
             item-title="name"
@@ -96,7 +110,7 @@
         </v-col>
       </v-card>
       <v-card
-        v-if="form.package || form.service"
+        v-if="form.packages || form.service"
         flat
         border
         class="mt-5 py-5 px-10"
@@ -104,7 +118,7 @@
         <v-row class="ga-3 align-self-end">
           <v-col>
             <div
-              v-for="(item, index) in form.package"
+              v-for="(item, index) in form.packages"
               :key="index"
               class="d-flex text-medium-emphasis"
             >
@@ -144,19 +158,29 @@
               </div>
             </v-sheet>
           </v-col>
-          <v-col>
-            <v-btn
-              :disabled="!form.client"
-              class="text-none"
-              color="blue"
-              size="large"
-              @click="createAppointment"
-              variant="tonal"
-            >
-              Create Appointment
-            </v-btn>
+          <v-col v-if="grandTotal() != form.amount_paid">
+            <v-chip class="ma-2" color="orange-darken-3" label>
+              <v-icon icon="mdi-cash-multiple" start></v-icon>
+              {{ formatNumber(grandTotal() - form.amount_paid) }}
+
+              <v-tooltip activator="parent" location="end"
+                >Payment Balance</v-tooltip
+              >
+            </v-chip>
           </v-col>
         </v-row>
+        <v-col class="d-flex justify-center align-center mt-5">
+          <v-btn
+            :disabled="!form.client"
+            class="text-none"
+            color="blue"
+            size="large"
+            @click="createAppointment"
+            variant="tonal"
+          >
+            Create Appointment
+          </v-btn>
+        </v-col>
       </v-card>
     </v-card>
     <FormClientDialog @exitDialog="exitDialog" />
@@ -170,6 +194,7 @@ const formDialogStore = useFormDialogStore();
 const alertDialog = useAlertStore();
 const clients = ref([]);
 const packages = ref([]);
+const combos = ref([]);
 const services = ref([]);
 
 const form = ref({});
@@ -177,8 +202,8 @@ const form = ref({});
 const grandTotal = () => {
   let total = 0;
 
-  if (form.value.package) {
-    form.value.package.forEach((element) => {
+  if (form.value.packages) {
+    form.value.packages.forEach((element) => {
       total += parseInt(element.price);
     });
   }
@@ -252,7 +277,7 @@ fetchServiceData();
 const createAppointment = async () => {
   try {
     let payload = form.value;
-    payload.package_id = payload.package.id;
+    payload.package_id = payload.packages.id;
     payload.service_id = payload.service.id;
     payload.client_id = payload.client.id;
 
@@ -267,7 +292,7 @@ const createAppointment = async () => {
     alertDialog.setAlert({
       show: true,
       color: "error",
-      content: "Failed to create Appointment.",
+      content: "Failed to Create Appointment.",
     });
   }
 };

@@ -14,6 +14,10 @@ export const useFormDialogStore = defineStore("formDialog", {
       dialog: false,
       payload: {},
     },
+    combo: {
+      dialog: false,
+      payload: {},
+    },
     service: {
       dialog: false,
       payload: {},
@@ -28,6 +32,9 @@ export const useFormDialogStore = defineStore("formDialog", {
     },
     setPackage(state) {
       this.package = state;
+    },
+    setCombo(state) {
+      this.combo = state;
     },
     setService(state) {
       this.service = state;

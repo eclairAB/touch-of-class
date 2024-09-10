@@ -1,7 +1,7 @@
 <template>
   <div class="text-center">
     <v-dialog
-      v-model="formDialog.package.dialog"
+      v-model="formDialog.combo.dialog"
       width="auto"
       @afterEnter="dialogOpens"
       @afterLeave="closeDialog"
@@ -10,35 +10,37 @@
         class="px-5 pb-4"
         width="700"
         max-width="700"
-        prepend-icon="mdi-package-variant-closed"
+        prepend-icon="mdi-shopping"
         text=""
-        title="Package Information"
+        title="Combo Information"
         flat
       >
-        <v-form v-model="form_validate">
+        <v-form v-model="form_validate" :readonly="formDisabled()">
           <v-container>
             <v-row>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="12">
                 <v-text-field
                   v-model="form.name"
                   :counter="10"
-                  label="Package Name"
+                  label="Combo Name"
                   hide-details
                   variant="outlined"
                   required
                 ></v-text-field>
               </v-col>
-
-              <v-col cols="12" md="6">
-                <v-number-input
-                  v-model="form.sessions"
-                  :counter="10"
-                  label="Sessions"
-                  hide-details
+              <v-col cols="12" md="12">
+                <v-autocomplete
+                  v-model="form.services"
+                  item-value="id"
+                  item-title="name"
+                  :items="services"
+                  chips
+                  closable-chips="true"
+                  multiple
+                  label="Select Services"
                   variant="outlined"
-                  required
-                  min="0"
-                ></v-number-input>
+                  clearable
+                ></v-autocomplete>
               </v-col>
               <v-col cols="12" md="6">
                 <v-number-input
@@ -65,14 +67,14 @@
         </v-form>
         <template v-slot:actions>
           <v-btn
-            v-if="!create_mode"
+            v-if="!create_mode && !formDisabled()"
             class="text-none"
             color="red"
             size="large"
             @click="deleteAction"
             variant="tonal"
           >
-            {{ delete_confirmed ? "Click again to confirm" : "Delete Package" }}
+            {{ delete_confirmed ? "Click again to confirm" : "Delete Combo" }}
           </v-btn>
           <v-spacer />
           <v-btn
@@ -85,6 +87,7 @@
             Close
           </v-btn>
           <v-btn
+            v-if="!formDisabled()"
             class="text-none"
             color="blue"
             size="large"
@@ -98,7 +101,7 @@
     </v-dialog>
   </div>
 </template>
-<script setup>
+  <script setup>
 const { $api } = useNuxtApp();
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
@@ -113,41 +116,63 @@ const form_validate = ref(false);
 const create_mode = ref(true);
 const delete_confirmed = ref(false);
 
+const services = ref({});
+
+const mapServiceId = () => {
+  // console.log(form.value.combo_services);
+  const combo_services = form.value.combo_services;
+  let mappedServiceId = [];
+
+  combo_services.map((service) => {
+    // alert(service.service_id)
+    mappedServiceId.push(service.service_id);
+  });
+  form.value.services = mappedServiceId;
+};
+const formDisabled = () => {
+  if (form.value.readonly === true) {
+    return true;
+  } else {
+    return false;
+  }
+};
 function submit() {
   if (create_mode.value) {
-    createPackage();
+    createCombo();
   } else {
-    updatePackage();
+    updateCombo();
   }
 }
 function dialogOpens() {
-  if (formDialog.package.payload) {
-    form.value = formDialog.package.payload;
+  if (formDialog.combo.payload) {
+    form.value = formDialog.combo.payload;
     create_mode.value = false;
   } else {
     form.value = {};
     create_mode.value = true;
   }
+
+  mapServiceId();
 }
 function closeDialog() {
   emit("exitDialog");
   delete_confirmed.value = false;
-  formDialog.setPackage({ dialog: false });
+  formDialog.setCombo({ dialog: false });
 }
 function deleteAction() {
   if (delete_confirmed.value) {
-    deletePackage();
+    deleteCombo();
   } else {
     delete_confirmed.value = true;
   }
 }
-const createPackage = async () => {
+const createCombo = async () => {
   try {
-    const response = await $api.post(`/packages/`, form.value);
+    const response = await $api.post(`/combos/`, form.value);
     alertDialog.setAlert({
       show: true,
       color: "success",
-      content: "New Package Created!",
+      content: "New Combo Created!",
     });
     closeDialog();
   } catch (error) {
@@ -155,17 +180,17 @@ const createPackage = async () => {
     alertDialog.setAlert({
       show: true,
       color: "error",
-      content: "Failed to create Package.",
+      content: "Failed to create Combo.",
     });
   }
 };
-const updatePackage = async () => {
+const updateCombo = async () => {
   try {
-    const response = await $api.put(`/packages/${form.value.id}`, form.value);
+    const response = await $api.put(`/combos/${form.value.id}`, form.value);
     alertDialog.setAlert({
       show: true,
       color: "success",
-      content: "Package Updated!",
+      content: "Combo Updated!",
     });
     closeDialog();
   } catch (error) {
@@ -173,17 +198,17 @@ const updatePackage = async () => {
     alertDialog.setAlert({
       show: true,
       color: "error",
-      content: "Failed to Update Package.",
+      content: "Failed to Update Combo.",
     });
   }
 };
-const deletePackage = async () => {
+const deleteCombo = async () => {
   try {
-    const response = await $api.delete(`/packages/${form.value.id}`);
+    const response = await $api.delete(`/combos/${form.value.id}`);
     alertDialog.setAlert({
       show: true,
       color: "success",
-      content: "Package Deleted!",
+      content: "Combo Deleted!",
     });
     delete_confirmed.value = false;
     closeDialog();
@@ -192,9 +217,25 @@ const deletePackage = async () => {
     alertDialog.setAlert({
       show: true,
       color: "error",
-      content: "Failed to Delete Package.",
+      content: "Failed to Delete Combo.",
     });
     delete_confirmed.value = false;
   }
 };
+
+const fetchServiceData = async () => {
+  try {
+    const response = await $api.get(`/services/`);
+
+    services.value = response.data;
+  } catch (error) {
+    alertDialog.setClient({
+      show: true,
+      color: "error",
+      content: "Failed to fetch Services.",
+    });
+  }
+};
+fetchServiceData();
 </script>
+  

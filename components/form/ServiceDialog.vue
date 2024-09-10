@@ -10,12 +10,12 @@
         class="px-5 pb-4"
         width="700"
         max-width="700"
-        prepend-icon="mdi-package-variant-closed"
+        prepend-icon="mdi-shopping"
         text=""
         title="Service Information"
         flat
       >
-        <v-form v-model="form_validate">
+        <v-form v-model="form_validate" :readonly="formDisabled()">
           <v-container>
             <v-row>
               <v-col cols="12" md="12">
@@ -29,29 +29,31 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6">
-                <v-text-field
+                <v-number-input
                   v-model="form.commission_percentage"
                   label="Commission Percentage"
                   hide-details
                   variant="outlined"
                   required
-                ></v-text-field>
+                  min="0"
+                ></v-number-input>
               </v-col>
               <v-col cols="12" md="6">
-                <v-text-field
+                <v-number-input
                   v-model="form.price"
                   label="Price"
                   hide-details
                   variant="outlined"
                   required
-                ></v-text-field>
+                  min="0"
+                ></v-number-input>
               </v-col>
             </v-row>
           </v-container>
         </v-form>
         <template v-slot:actions>
           <v-btn
-            v-if="!create_mode"
+            v-if="!create_mode && !formDisabled()"
             class="text-none"
             color="red"
             size="large"
@@ -71,6 +73,7 @@
             Close
           </v-btn>
           <v-btn
+            v-if="!formDisabled()"
             class="text-none"
             color="blue"
             size="large"
@@ -99,6 +102,13 @@ const form_validate = ref(false);
 const create_mode = ref(true);
 const delete_confirmed = ref(false);
 
+const formDisabled = () => {
+  if (form.value.readonly === true) {
+    return true;
+  } else {
+    return false;
+  }
+};
 function submit() {
   if (create_mode.value) {
     createService();
@@ -117,7 +127,7 @@ function dialogOpens() {
 }
 function closeDialog() {
   emit("exitDialog");
-
+  delete_confirmed.value = false;
   formDialog.setService({ dialog: false });
 }
 function deleteAction() {
