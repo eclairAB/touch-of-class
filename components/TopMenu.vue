@@ -1,73 +1,78 @@
 <template>
   <div>
-    <v-app-bar
-      v-if="route.path != '/'"
-      color="blue-lighten-1"
-      scroll-behavior="collapse"
-      scroll-threshold="150"
-      elevation="0"
-    >
-      <template v-slot:prepend>
-        <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      </template>
+    <client-only>
+      <v-app-bar
+        v-if="route.path != '/'"
+        color="blue-lighten-1"
+        scroll-behavior="collapse"
+        scroll-threshold="150"
+        elevation="0"
+      >
+        <template v-slot:prepend>
+          <v-app-bar-nav-icon
+            @click.stop="drawer = !drawer"
+          ></v-app-bar-nav-icon>
+        </template>
 
-      <v-app-bar-title>
-        {{ username ? `Greetings ${username}!` : "Good day!" }}
+        <v-app-bar-title>
+          {{ username ? `Greetings ${username}!` : "Good day!" }}
 
-        <v-chip
-          class="ml-5"
-          @click="changeBranch()"
-          v-if="userStore.role == 'cashier'"
-        >
-          Current Branch:&nbsp;<span class="text">{{
-            userStore.branch.select.name || "loading..."
-          }}</span>
-        </v-chip>
-      </v-app-bar-title>
+          <v-chip
+            class="ml-5"
+            @click="changeBranch()"
+            v-if="userStore.role == 'cashier'"
+          >
+            Current Branch:&nbsp;<span class="text">{{
+              userStore.branch.select.name || "loading..."
+            }}</span>
+          </v-chip>
+        </v-app-bar-title>
 
-      <template v-slot:append>
-        <v-btn
-          :icon="
-            theme.global.current.value.dark
-              ? 'mdi-white-balance-sunny'
-              : 'mdi-moon-waning-crescent'
-          "
-          @click="toggleTheme"
-        ></v-btn>
+        <template v-slot:append>
+          <v-btn
+            :icon="
+              theme.global.current.value.dark
+                ? 'mdi-white-balance-sunny'
+                : 'mdi-moon-waning-crescent'
+            "
+            @click="toggleTheme"
+          ></v-btn>
 
-        <!-- <v-btn icon="mdi-magnify"></v-btn> -->
+          <!-- <v-btn icon="mdi-magnify"></v-btn> -->
 
-        <v-menu>
-          <template v-slot:activator="{ props }">
-            <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
-          </template>
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
+            </template>
 
-          <v-list>
-            <v-list-item
-              v-for="(item, i) in menuItem"
-              :key="i"
-              :href="item.value"
-              @click="menuItemClick(item)"
-            >
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </template>
-    </v-app-bar>
-    <v-navigation-drawer
-      v-model="drawer"
-      :location="$vuetify.display.mobile ? 'left' : undefined"
-      temporary
-    >
-      <v-list nav :key="index" v-for="(item, index) in items[userStore.role]">
-        <v-list-item
-          :prepend-icon="item.icon"
-          :title="item.title"
-          :href="item.value"
-        ></v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+            <v-list>
+              <v-list-item
+                v-for="(item, i) in menuItem"
+                :key="i"
+                :href="item.value"
+                @click="menuItemClick(item)"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
+      </v-app-bar>
+
+      <v-navigation-drawer
+        v-model="drawer"
+        :location="$vuetify.display.mobile ? 'left' : undefined"
+        temporary
+      >
+        <v-list nav :key="index" v-for="(item, index) in items[userStore.role]">
+          <v-list-item
+            :prepend-icon="item.icon"
+            :title="item.title"
+            :href="item.value"
+          ></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+    </client-only>
   </div>
 </template>
 <script setup>
@@ -143,6 +148,4 @@ function changeBranch() {
 
   userStore.setBranch(branch);
 }
-
-
 </script>
