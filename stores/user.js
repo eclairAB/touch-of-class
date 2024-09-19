@@ -6,6 +6,10 @@ export const useUserStore = defineStore("user", {
     username: "",
     // role: localStorage.getItem("role") || "",
     role: "",
+    branch: {
+      select: "",
+      dialog: false,
+    },
   }),
   actions: {
     setUsername(username) {
@@ -14,6 +18,19 @@ export const useUserStore = defineStore("user", {
     setRole(role) {
       this.role = role;
       // localStorage.setItem("role", role);
+    },
+    setBranch(branch) {
+      this.branch = branch;
+    },
+    checkBranch() {
+      if (this.branch.select == "") {
+        this.setBranch({
+          select: "",
+          dialog: true,
+        });
+      } else {
+        return true;
+      }
     },
   },
 });

@@ -40,7 +40,15 @@
                   label="Select Services"
                   variant="outlined"
                   clearable
-                ></v-autocomplete>
+                >
+                  <template v-slot:item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :title="item.raw.name"
+                      :subtitle="'₱ ' + item.raw.price"
+                    ></v-list-item>
+                  </template>
+                </v-autocomplete>
               </v-col>
               <v-col cols="12" md="6">
                 <v-number-input
@@ -119,12 +127,10 @@ const delete_confirmed = ref(false);
 const services = ref({});
 
 const mapServiceId = () => {
-  // console.log(form.value.combo_services);
   const combo_services = form.value.combo_services;
   let mappedServiceId = [];
 
   combo_services.map((service) => {
-    // alert(service.service_id)
     mappedServiceId.push(service.service_id);
   });
   form.value.services = mappedServiceId;

@@ -2,6 +2,7 @@
   <div>
     <v-app>
       <AlertNotification />
+      <BranchPrompt />
       <TopMenu />
       <NuxtRouteAnnouncer />
       <NuxtPage />

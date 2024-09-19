@@ -6,15 +6,16 @@
       </v-card-title>
       <v-form class="pt-3 px-5 h-100">
         <v-row class="ga-3">
-          <v-combobox
-            v-model="form.client"
+          <v-autocomplete
+            v-model="form.client_id"
             label="Select Client"
             :items="clients"
             density="comfortable"
             variant="outlined"
             :item-title="clientSelectorTitle"
+            item-value="id"
             chips
-          ></v-combobox>
+          ></v-autocomplete>
           <v-btn
             class="text-none"
             color="blue-darken-4"
@@ -27,6 +28,7 @@
         </v-row>
         <v-row class="ga-3">
           <v-combobox
+            :closable-chips="_true"
             v-model="form.packages"
             :items="packages"
             chips
@@ -41,6 +43,7 @@
         </v-row>
         <v-row class="ga-3">
           <v-combobox
+            :closable-chips="_true"
             v-model="form.combos"
             :items="combos"
             chips
@@ -55,7 +58,8 @@
         </v-row>
         <v-row>
           <v-combobox
-            v-model="form.service"
+            :closable-chips="_true"
+            v-model="form.services"
             :items="services"
             chips
             multiple
@@ -75,7 +79,7 @@
       </v-card-title>
       <v-card flat border class="pa-5 h-100">
         <v-col>
-          <v-combobox
+          <v-autocomplete
             v-model="form.payment_type"
             :items="['Cash', 'Online']"
             chips
@@ -129,6 +133,17 @@
               <span> ₱ {{ formatNumber(item.price) }} </span>
             </div>
             <div
+              v-for="(item, index) in form.combos"
+              :key="index"
+              class="d-flex text-medium-emphasis"
+            >
+              <span>
+                {{ item.name }}
+              </span>
+              <v-spacer></v-spacer>
+              <span> ₱ {{ formatNumber(item.price) }} </span>
+            </div>
+            <div
               v-for="(item, index) in form.service"
               :key="index"
               class="d-flex text-medium-emphasis"
@@ -171,7 +186,7 @@
         </v-row>
         <v-col class="d-flex justify-center align-center mt-5">
           <v-btn
-            :disabled="!form.client"
+            :disabled="!form.client_id"
             class="text-none"
             color="blue"
             size="large"
@@ -188,8 +203,10 @@
 </template>
 <script setup>
 const { $api } = useNuxtApp();
+import { useUserStore } from "@/stores/user";
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
+const userStore = useUserStore();
 const formDialogStore = useFormDialogStore();
 const alertDialog = useAlertStore();
 const clients = ref([]);
@@ -199,11 +216,19 @@ const services = ref([]);
 
 const form = ref({});
 
+const _true = ref(true);
+const _false = ref(false);
+
 const grandTotal = () => {
   let total = 0;
 
   if (form.value.packages) {
     form.value.packages.forEach((element) => {
+      total += parseInt(element.price);
+    });
+  }
+  if (form.value.combos) {
+    form.value.combos.forEach((element) => {
       total += parseInt(element.price);
     });
   }
@@ -224,7 +249,7 @@ const clientSelectorTitle = (item) => {
   if (item.id) {
     return `${item.first_name} ${item.last_name}`;
   } else {
-    form.value.client = "";
+    form.value.client_id = "";
   }
 };
 function addClient() {
@@ -258,13 +283,26 @@ const fetchPackageData = async () => {
     });
   }
 };
+const fetchComboData = async () => {
+  try {
+    const response = await $api.get(`/combos/`);
+
+    combos.value = response.data;
+  } catch (error) {
+    alertDialog.setAlert({
+      show: true,
+      color: "error",
+      content: "Failed to fetch Combos.",
+    });
+  }
+};
 const fetchServiceData = async () => {
   try {
     const response = await $api.get(`/services/`);
 
     services.value = response.data;
   } catch (error) {
-    alertDialog.setClient({
+    alertDialog.setAlert({
       show: true,
       color: "error",
       content: "Failed to fetch Services.",
@@ -273,13 +311,16 @@ const fetchServiceData = async () => {
 };
 fetchUserData();
 fetchPackageData();
+fetchComboData();
 fetchServiceData();
 const createAppointment = async () => {
   try {
     let payload = form.value;
-    payload.package_id = payload.packages.id;
-    payload.service_id = payload.service.id;
-    payload.client_id = payload.client.id;
+    payload.package_id = payload.packages ? payload.packages.id : null;
+    payload.combo_id = payload.combos ? payload.combos.id : null;
+    payload.service_id = payload.services ? payload.services.id : null;
+    payload.branch_id = userStore.branch.select.id;
+    payload.amount_payable = grandTotal();
 
     const response = await $api.post(`/appointments/`, form.value);
     alertDialog.setAlert({
@@ -289,6 +330,7 @@ const createAppointment = async () => {
     });
     form.value = {};
   } catch (error) {
+    console.error(error);
     alertDialog.setAlert({
       show: true,
       color: "error",
