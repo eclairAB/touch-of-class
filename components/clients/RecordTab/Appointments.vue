@@ -1,6 +1,6 @@
 <template>
   <v-sheet class="appointment-tab pa-5 d-flex flex-wrap ga-2">
-    <v-timeline align="start" side="end">
+    <v-timeline align="start" side="end" truncate-line="start">
       <v-timeline-item
         v-for="(item, index) in appointments"
         :key="index"
@@ -16,7 +16,7 @@
             <strong>{{ item.name }} </strong>&nbsp;
             <i class="text-grey">- {{ item.variation }}</i>
             <div class="text-caption">
-              Sessions: {{ item.claimed }}/{{ item.sessions }}
+              Availed sessions: {{ item.claimed }}/{{ item.sessions }}
             </div>
           </div>
         </div>
@@ -24,7 +24,8 @@
         <div v-if="item.variation == 'combo'">
           <strong>{{ item.name }} </strong>&nbsp;
           <i class="text-grey">- {{ item.variation }}</i>
-          <v-timeline align="start" side="end" truncate-line="end">
+          <div>&nbsp;</div>
+          <v-timeline align="start" truncate-line="end">
             <v-timeline-item
               v-for="(service, index1) in item.services"
               :key="index1"
@@ -53,11 +54,14 @@
 const { $api } = useNuxtApp();
 import { useAlertStore } from "@/stores/alertDialog";
 const alertDialog = useAlertStore();
+import { useFormDialogStore } from "@/stores/formDialog";
+const formDialog = useFormDialogStore();
 const appointments = ref([]);
 
 const fetchAppointmentsData = async () => {
   try {
-    const response = await $api.get(`/appointments/`);
+    const client_id = formDialog.clientInfo.payload.id;
+    const response = await $api.get(`/appointments/${client_id}`);
 
     response.data.forEach((appointment) => {
       if (appointment.package_redeems.length > 0) {
@@ -111,7 +115,7 @@ function insertPackage(package_redeems) {
     return acc;
   }, []);
 
-  appointments.value.push(...result);
+  appointments.value.unshift(...result);
 }
 function insertCombo(combo_redeems) {
   const result = combo_redeems.reduce((acc, redeem) => {
@@ -137,11 +141,11 @@ function insertCombo(combo_redeems) {
     return acc;
   }, []);
 
-  appointments.value.push(...result);
+  appointments.value.unshift(...result);
 }
 function insertService(service_redeems) {
   service_redeems.forEach((service) => {
-    appointments.value.push({
+    appointments.value.unshift({
       variation: "service",
       name: service.service.name,
       claimed: service.branch_id ? 1 : 0,
