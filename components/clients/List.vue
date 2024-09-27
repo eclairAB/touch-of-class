@@ -68,6 +68,15 @@
                 <template v-slot:title>
                   <strong class="text-h6">
                     {{ item.raw.first_name }} {{ item.raw.last_name }}
+                    <v-btn
+                      flat
+                      color="blue-lighten-5"
+                      class="text-none ml-1 mb-1"
+                      @click="editClicked(item.raw)"
+                      density="comfortable"
+                      size="small"
+                      icon="mdi-pencil"
+                    />
                   </strong>
                 </template>
               </v-list-item>
@@ -110,7 +119,7 @@
                 color="grey-lighten-3"
                 class="text-none"
                 block
-                @click="editClicked(item.raw)"
+                @click="moreInfoClicked(item.raw)"
               >
                 More info
               </v-btn>
@@ -131,6 +140,7 @@
       </template>
     </v-data-iterator>
     <ClientsSingle />
+    <ClientsRecordTab />
     <FormClientDialog @exitDialog="exitDialog" />
   </v-card>
 </template>
@@ -177,9 +187,11 @@ fetchUserData();
 function editClicked(client) {
   formDialogStore.setClient({ dialog: true, payload: client });
 }
-
 function addClient() {
   formDialogStore.setClient({ dialog: true });
+}
+function moreInfoClicked(client) {
+  formDialogStore.setClientInfo({ dialog: true, payload: client });
 }
 function exitDialog() {
   fetchUserData();

@@ -81,7 +81,7 @@
         <v-col>
           <v-autocomplete
             v-model="form.payment_type"
-            :items="['Cash', 'Online']"
+            :items="['Cash', 'Online', 'Card']"
             chips
             label="Select Payment Type"
             density="comfortable"
@@ -89,11 +89,11 @@
             item-title="name"
             clearable
           />
-          <v-sheet v-if="form.payment_type == 'Online'">
+          <v-sheet v-if="form.payment_type == 'Online' || form.payment_type == 'Card'">
             <v-text-field
               v-model="form.biller"
               label="Biller name"
-              hint="( Metrobank, Union Bank, Gcash, etc. )"
+              :hint="form.payment_type == 'Online' ? `( Gcash, Paymaya, etc. )` : `( Credit, Debit )` "
               density="comfortable"
               variant="outlined"
             />
@@ -114,7 +114,7 @@
         </v-col>
       </v-card>
       <v-card
-        v-if="form.packages || form.service"
+        v-if="form.packages || form.services"
         flat
         border
         class="mt-5 py-5 px-10"
@@ -144,7 +144,7 @@
               <span> ₱ {{ formatNumber(item.price) }} </span>
             </div>
             <div
-              v-for="(item, index) in form.service"
+              v-for="(item, index) in form.services"
               :key="index"
               class="d-flex text-medium-emphasis"
             >
@@ -232,8 +232,8 @@ const grandTotal = () => {
       total += parseInt(element.price);
     });
   }
-  if (form.value.service) {
-    form.value.service.forEach((element) => {
+  if (form.value.services) {
+    form.value.services.forEach((element) => {
       total += parseInt(element.price);
     });
   }

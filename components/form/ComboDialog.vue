@@ -50,17 +50,7 @@
                   </template>
                 </v-autocomplete>
               </v-col>
-              <v-col cols="12" md="6">
-                <v-number-input
-                  v-model="form.commission_percentage"
-                  label="Commission Percentage"
-                  hide-details
-                  variant="outlined"
-                  required
-                  min="0"
-                ></v-number-input>
-              </v-col>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="12">
                 <v-number-input
                   v-model="form.price"
                   label="Price"

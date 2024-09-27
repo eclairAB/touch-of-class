@@ -32,7 +32,11 @@
   </div>
 </template>
 <script setup>
-import { ProductsPackageTab, ProductsComboTab, ProductsServiceTab } from "#components";
+import {
+  ProductsPackageTab,
+  ProductsComboTab,
+  ProductsServiceTab,
+} from "#components";
 
 const components_ = {
   package: ProductsPackageTab,

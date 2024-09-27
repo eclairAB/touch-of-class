@@ -6,6 +6,10 @@ export const useFormDialogStore = defineStore("formDialog", {
       dialog: false,
       payload: {},
     },
+    clientInfo: {
+      dialog: false,
+      payload: {},
+    },
     appointment: {
       dialog: false,
       payload: {},
@@ -30,6 +34,9 @@ export const useFormDialogStore = defineStore("formDialog", {
   actions: {
     setClient(state) {
       this.client = state;
+    },
+    setClientInfo(state) {
+      this.clientInfo = state;
     },
     setAppointment(state) {
       this.appointment = state;

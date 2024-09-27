@@ -54,6 +54,15 @@
                 <template v-slot:title>
                   <strong class="text-h6">
                     {{ item.raw.name }}
+                    <v-btn
+                      flat
+                      color="blue-lighten-5"
+                      class="text-none ml-1 mb-1"
+                      @click="editClicked(item.raw)"
+                      density="comfortable"
+                      size="small"
+                      icon="mdi-pencil"
+                    />
                   </strong>
                 </template>
               </v-list-item>
@@ -94,15 +103,6 @@
                   </tr>
                 </tbody>
               </v-table>
-              <v-btn
-                flat
-                color="grey-lighten-3"
-                class="text-none"
-                block
-                @click="editClicked(item.raw)"
-              >
-                Edit
-              </v-btn>
             </v-sheet>
           </v-col>
         </v-row>
