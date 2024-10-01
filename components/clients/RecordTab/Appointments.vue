@@ -11,20 +11,34 @@
           <strong class="me-4">{{ formatDate(item.created_at) }}</strong>
         </template>
         <!-- Package -->
-        <div v-if="item.variation == 'package'">
-          <div>
-            <strong>{{ item.name }} </strong>&nbsp;
-            <i class="text-grey">- {{ item.variation }}</i>
-            <div class="text-caption">
-              Availed sessions: {{ item.claimed }}/{{ item.sessions }}
-            </div>
+        <v-card
+          flat
+          border
+          class="py-2 px-4"
+          v-if="item.variation == 'package'"
+        >
+          <strong>{{ item.name }} </strong>
+          <i class="text-grey text-caption"> - {{ item.variation }}</i>
+          <div class="text-caption">
+            Availed sessions: {{ item.claimed }}/{{ item.sessions }}
           </div>
-        </div>
+          <v-card-actions>
+            <v-btn color="blue" class="text-none" @click="availClicked(item)"
+              >Avail</v-btn
+            >
+            <v-btn color="green" class="text-none">Make Payment</v-btn>
+          </v-card-actions>
+        </v-card>
         <!-- Combo -->
-        <div v-if="item.variation == 'combo'">
-          <strong>{{ item.name }} </strong>&nbsp;
-          <i class="text-grey">- {{ item.variation }}</i>
-          <div>&nbsp;</div>
+        <v-card flat border class="py-2 px-4" v-if="item.variation == 'combo'">
+          <strong>{{ item.name }} </strong>
+          <i class="text-grey text-caption"> - {{ item.variation }}</i>
+          <v-card-actions>
+            <v-btn color="blue" class="text-none" @click="availClicked(item)"
+              >Avail</v-btn
+            >
+            <v-btn color="green" class="text-none">Make Payment</v-btn>
+          </v-card-actions>
           <v-timeline align="start" truncate-line="end">
             <v-timeline-item
               v-for="(service, index1) in item.services"
@@ -33,30 +47,84 @@
               size="x-small"
             >
               <div>
-                {{ service.service.name }}&nbsp;
-                <i class="text-grey">- service</i>
+                {{ service.service.name }}
+                <i class="text-grey text-caption"> - service</i>
                 <div class="text-caption">Unavailed</div>
               </div>
             </v-timeline-item>
           </v-timeline>
-        </div>
+        </v-card>
         <!-- Service -->
-        <div v-if="item.variation == 'service'">
-          <strong>{{ item.name }} </strong>&nbsp;
-          <i class="text-grey">- {{ item.variation }}</i>
+        <v-card
+          flat
+          border
+          class="py-2 px-4"
+          v-if="item.variation == 'service'"
+        >
+          <strong>{{ item.name }} </strong>
+          <i class="text-grey text-caption"> - {{ item.variation }}</i>
           <div class="text-caption">Unavailed</div>
-        </div>
+          <v-card-actions>
+            <v-btn
+              color="blue"
+              class="text-none"
+              @click="availClicked({ item })"
+              >Avail</v-btn
+            >
+            <v-btn color="green" class="text-none">Make Payment</v-btn>
+          </v-card-actions>
+        </v-card>
       </v-timeline-item>
     </v-timeline>
+    <v-dialog v-model="availDialog.status" width="500" persistent>
+      <v-card prepend-icon="mdi-content-cut" title="Product avail">
+        <v-col class="px-5">
+          <v-chip class="mb-4" color="orange">
+            <v-icon icon="mdi-alert-circle" start></v-icon>
+            Availing in&nbsp;<strong>{{ userStore.branch.select.name }}</strong
+            >&nbsp;Branch
+          </v-chip>
+          <v-autocomplete
+            v-model="availForm.stylist_id"
+            label="Select Catering Stylist"
+            :items="[]"
+            density="comfortable"
+            variant="outlined"
+            item-value="id"
+            chips
+          ></v-autocomplete>
+          <!-- {{ availForm }} -->
+        </v-col>
+        <v-card-actions>
+          <v-btn
+            color="success"
+            class="text-none"
+            text="confirm avail"
+            @click="availDialog.status = false"
+          ></v-btn>
+          <v-btn
+            color="error"
+            class="text-none"
+            text="cancel"
+            @click="availDialog.status = false"
+          ></v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-sheet>
 </template>
   <script setup>
 const { $api } = useNuxtApp();
 import { useAlertStore } from "@/stores/alertDialog";
-const alertDialog = useAlertStore();
+import { useUserStore } from "@/stores/user";
 import { useFormDialogStore } from "@/stores/formDialog";
+const alertDialog = useAlertStore();
 const formDialog = useFormDialogStore();
+const userStore = useUserStore();
+
 const appointments = ref([]);
+const availDialog = ref({});
+const availForm = ref({});
 
 const fetchAppointmentsData = async () => {
   try {
@@ -152,5 +220,9 @@ function insertService(service_redeems) {
       created_at: service.created_at,
     });
   });
+}
+function availClicked(product) {
+  availDialog.value.status = true;
+  availForm.value.form = product;
 }
 </script>

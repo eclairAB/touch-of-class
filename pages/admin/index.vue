@@ -6,15 +6,15 @@
         <div class="flex-grow-1">
           <payments-card />
         </div>
-        <div class="">
+        <!-- <div class="">
           <commission-card />
-        </div>
+        </div> -->
       </v-row>
-      <v-row class="mx-10 px-10">
+      <!-- <v-row class="mx-10 px-10">
         <div class="flex-grow-1 mt-5">
           <clients-quick-view />
         </div>
-      </v-row>
+      </v-row> -->
     </v-col>
   </div>
 </template>

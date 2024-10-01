@@ -63,6 +63,17 @@
                       size="small"
                       icon="mdi-pencil"
                     />
+                    <v-btn
+                      flat
+                      rounded
+                      readonly
+                      color="grey-lighten-3"
+                      class="text-none ml-3 mb-1"
+                      size="small"
+                      prepend-icon="mdi-download"
+                    >
+                      Generate Report
+                    </v-btn>
                   </strong>
                 </template>
               </v-list-item>

@@ -69,15 +69,15 @@ const components_ = {
 };
 
 const tab = ref({
-  current: "tab-1",
+  current: "tab-2",
   status: false,
 });
 const tabs = ref([
-  {
-    text: "Actions",
-    value: "tab-1",
-    component: "action",
-  },
+  // {
+  //   text: "Actions",
+  //   value: "tab-1",
+  //   component: "action",
+  // },
   {
     text: "Appointments",
     value: "tab-2",
@@ -101,7 +101,7 @@ function getComponent(x) {
 }
 
 function dialogOpens() {
-  tab.value.current = "tab-1";
+  tab.value.current = "tab-2";
 }
 function closeDialog() {
   formDialog.setClientInfo({ dialog: false });
@@ -136,9 +136,11 @@ function appendPayment() {
 // Function to remove payment from tabs
 function removePayment() {
   tabs.value = tabs.value.filter((tab) => tab.value !== payment_tab.value);
-  tab.value.current = "tab-1";
+  tab.value.current = "tab-2";
   tab.value.status = false;
 
-  ClientsRecordTabAppointments.value.fetchAppointmentsData();
+  setTimeout(() => {
+    ClientsRecordTabAppointments.value.fetchAppointmentsData();
+  }, 500);
 }
 </script>

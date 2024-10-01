@@ -4,7 +4,7 @@
       <v-card-actions>
         <v-btn
           class="text-none"
-          @click="closeTab()"
+          @click="closeTab"
           variant="tonal"
         >
           Close

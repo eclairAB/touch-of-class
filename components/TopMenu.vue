@@ -107,6 +107,11 @@ const items = ref({
       title: "Branches",
       value: "/touch-of-class/admin/branches",
     },
+    {
+      icon: "mdi-account-group",
+      title: "Manage Staffs",
+      value: "/touch-of-class/admin/staffs",
+    },
   ],
   cashier: [
     {

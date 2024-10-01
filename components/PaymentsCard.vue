@@ -7,7 +7,7 @@
     </v-toolbar>
     <v-data-table-server
       v-if="commissionTable"
-      v-model:items-per-page="commissionTable.itemsPerPage"
+      :items-per-page="commissionTable.itemsPerPage"
       :headers="commissionTable.headers"
       :items="commissionTable.serverItems"
       :items-length="commissionTable.totalItems"
