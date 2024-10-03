@@ -132,7 +132,8 @@ const menuItem = [
     value: "/touch-of-class/",
   },
 ];
-const drawer = useState("value", () => false);
+// const drawer = useState("value", () => false);
+const drawer = ref(false);
 
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";

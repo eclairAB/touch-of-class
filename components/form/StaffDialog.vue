@@ -22,15 +22,16 @@
           boilerplate
           v-if="false"
         ></v-skeleton-loader>
-        <v-form v-model="form_validate">
+        <v-form ref="staff_form">
           <v-container>
             <v-row>
               <v-col cols="12" md="6">
                 <v-text-field
                   v-model="form.first_name"
+                  :error-messages="form_errors.first_name"
+                  :hide-details="!form_errors.first_name"
                   :counter="10"
                   label="First name"
-                  hide-details
                   variant="outlined"
                   required
                 ></v-text-field>
@@ -39,9 +40,10 @@
               <v-col cols="12" md="6">
                 <v-text-field
                   v-model="form.last_name"
+                  :error-messages="form_errors.last_name"
+                  :hide-details="!form_errors.last_name"
                   :counter="10"
                   label="Last name"
-                  hide-details
                   variant="outlined"
                   required
                 ></v-text-field>
@@ -49,8 +51,9 @@
               <v-col cols="12" md="6">
                 <v-text-field
                   v-model="form.email"
+                  :error-messages="form_errors.email"
+                  :hide-details="!form_errors.email"
                   label="E-mail"
-                  hide-details
                   variant="outlined"
                   required
                 ></v-text-field>
@@ -58,8 +61,9 @@
               <v-col cols="12" md="6">
                 <v-text-field
                   v-model="form.contact_number"
+                  :error-messages="form_errors.contact_number"
+                  :hide-details="!form_errors.contact_number"
                   label="Contact Number"
-                  hide-details
                   variant="outlined"
                   required
                 ></v-text-field>
@@ -67,6 +71,8 @@
               <v-col cols="12" md="12">
                 <v-autocomplete
                   v-model="form.role_id"
+                  :error-messages="form_errors.role_id"
+                  :hide-details="!form_errors.role_id"
                   label="Select Role"
                   :items="roles"
                   variant="outlined"
@@ -78,6 +84,8 @@
               <v-col cols="12" md="">
                 <v-text-field
                   v-model="form.password"
+                  :error-messages="form_errors.password"
+                  :hide-details="!form_errors.password"
                   label="Password"
                   placeholder="Enter Password"
                   variant="outlined"
@@ -90,6 +98,8 @@
               <v-col cols="12" md="" v-if="form.password">
                 <v-text-field
                   v-model="form.confirm_password"
+                  :error-messages="form_errors.confirm_password"
+                  :hide-details="!form_errors.confirm_password"
                   label="Confirm Password"
                   placeholder="Re-enter Password"
                   variant="outlined"
@@ -149,7 +159,7 @@ const visible = ref(false);
 
 // Form
 const form = ref({});
-const form_validate = ref(false);
+const form_errors = ref({});
 const create_mode = ref(true);
 const delete_confirmed = ref(false);
 
@@ -161,6 +171,10 @@ const fetchRoles = async () => {
     console.error("Failed to fetch roles data:", error);
   }
 };
+const validateForm = async () => {
+  const valid = await $refs.staff_form.validate();
+};
+
 function submit() {
   if (create_mode.value) {
     createStaff();
@@ -182,6 +196,7 @@ function closeDialog() {
   emit("exitDialog");
   delete_confirmed.value = false;
   formDialog.setStaff({ dialog: false });
+  form_errors.value = {};
 }
 function deleteAction() {
   if (delete_confirmed.value) {
@@ -192,7 +207,7 @@ function deleteAction() {
 }
 const createStaff = async () => {
   try {
-    const response = await $api.post(`/staffs/`, form.value);
+    const response = await $api.post(`/users/`, form.value);
 
     alertDialog.setAlert({
       show: true,
@@ -202,6 +217,10 @@ const createStaff = async () => {
     closeDialog();
   } catch (error) {
     // console.error("Failed to create staff data:", error);
+    if (error.response.data) {
+      console.error(error.response.data);
+      form_errors.value = error.response.data.errors;
+    }
     alertDialog.setAlert({
       show: true,
       color: "error",
@@ -211,7 +230,7 @@ const createStaff = async () => {
 };
 const updateStaff = async () => {
   try {
-    const response = await $api.put(`/staffs/${form.value.id}`, form.value);
+    const response = await $api.put(`/users/${form.value.id}`, form.value);
 
     alertDialog.setAlert({
       show: true,
@@ -230,7 +249,7 @@ const updateStaff = async () => {
 };
 const deleteStaff = async () => {
   try {
-    const response = await $api.delete(`/staffs/${form.value.id}`);
+    const response = await $api.delete(`/users/${form.value.id}`);
 
     alertDialog.setAlert({
       show: true,

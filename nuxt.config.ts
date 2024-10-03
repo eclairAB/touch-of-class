@@ -18,6 +18,9 @@ export default defineNuxtConfig({
       apiBaseUrl: 'http://localhost/api',
     }
   },
+  experimental: {
+    restoreState: true
+  },
   generate: {
     fallback: true,  // Generate a 404.html file for routing fallback
   },
@@ -31,17 +34,21 @@ export default defineNuxtConfig({
       }
     }
   },
+  
   css: [
     '~/assets/scss/main.scss'
   ],
+  sanctum: {
+    baseUrl: 'http://localhost/api', // Laravel API
+  },
   modules: [
+    // 'nuxt-auth-sanctum',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
         config.plugins.push(vuetify({ autoImport: true }))
       })
     },
-    //...
   ],
   vite: {
     vue: {

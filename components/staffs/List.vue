@@ -207,23 +207,6 @@ const fetchUserData = async () => {
     const response = await $api.post(`/staffs/search/`, payload);
     let userArray = response.data;
 
-    //   for (let id in userArray) {
-    //     let _combo = 0;
-    //     let _session = 0;
-    //     let _balance = 0;
-
-    //     if (userArray[id].appointments) {
-    //       for (let appointment of userArray[id].appointments) {
-    //         if (appointment.combo) _combo++;
-    //         if (appointment.package) _session++;
-    //       }
-    //     }
-
-    //     userArray[id].img = "https://bit.ly/4dnXrBi";
-    //     userArray[id].combo = _combo;
-    //     userArray[id].session = _session;
-    //   }
-
     clients.value = response.data;
   } catch (error) {
     console.error("Failed to fetch user data:", error);

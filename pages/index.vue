@@ -14,9 +14,9 @@
         <v-form @submit.prevent>
           <v-col cols="12" md="12">
             <v-text-field
-              v-model="form.username"
-              label="Username"
-              placeholder="Enter Username"
+              v-model="form.email"
+              label="Email"
+              placeholder="Enter Email"
               variant="outlined"
               prepend-inner-icon="mdi-account-outline"
             ></v-text-field>
@@ -38,48 +38,90 @@
               class="text-none mx-2"
               color="#c6811b"
               size="large"
-              @click="loginClicked('admin')"
+              @click="loginClicked()"
               prepend-icon="mdi-key"
               variant="tonal"
             >
-              Login as admin
-            </v-btn>
-            <v-btn
-              class="text-none mx-2"
-              color="#c6811b"
-              size="large"
-              @click="loginClicked('cashier')"
-              prepend-icon="mdi-key"
-              variant="tonal"
-            >
-              Login as cashier
-            </v-btn>
-            <v-btn
-              class="text-none mt-3"
-              color="#c6811b"
-              size="large"
-              @click="loginClicked('beautician')"
-              prepend-icon="mdi-key"
-              variant="tonal"
-            >
-              Login as beautician
+              Sign in
             </v-btn>
           </v-row>
+          <v-radio-group v-model="inputFill" @update:modelValue="setFields">
+            <v-radio label="Fill Admin" value="1"></v-radio>
+            <v-radio label="Fill Cashier" value="2"></v-radio>
+            <v-radio label="Fill Stylist" value="3"></v-radio>
+          </v-radio-group>
         </v-form>
       </v-col>
     </v-sheet>
   </div>
 </template>
 <script setup>
+const { $api, $authState } = useNuxtApp();
 import { useUserStore } from "@/stores/user";
+import { useAlertStore } from "@/stores/alertDialog";
 
+const inputFill = ref(null);
+const accessToken = useState("accessToken", () => 123);
+const alertDialog = useAlertStore();
 const userStore = useUserStore();
-const form = {};
-const visible = useState('value', () => { false });
+const form = ref({});
+const visible = useState("value", () => {
+  false;
+});
 
-function loginClicked(route) {
-  userStore.setUsername(form.username);
-  userStore.setRole(route);
-  navigateTo(`/${route}`);
+function loginClicked() {
+  authenticate();
 }
+function setFields() {
+  switch (inputFill.value) {
+    case "1":
+      form.value = {
+        email: 'admin@example.com',
+        password: 'secret'
+      }
+      break;
+    case "2":
+      form.value = {
+        email: 'cashier@example.com',
+        password: 'secret'
+      }
+      break;
+    case "3":
+      form.value = {
+        email: 'stylist@example.com',
+        password: 'secret'
+      }
+      break;
+
+    default:
+      break;
+  }
+}
+
+const authenticate = async () => {
+  try {
+    const payload = form.value;
+    const response = await $api.post(`/login/`, payload);
+
+    // accessToken.value = response.data.token;
+    $authState().setAuthToken(response.data.token);
+
+    const route = response.data.role.name;
+    userStore.setUsername(form.email);
+    userStore.setRole(route);
+    navigateTo(`/${route}`);
+
+    alertDialog.setAlert({
+      show: true,
+      color: "success",
+      content: "Login Successful.",
+    });
+  } catch (error) {
+    alertDialog.setAlert({
+      show: true,
+      color: "error",
+      content: error.response.data,
+    });
+  }
+};
 </script>
