@@ -13,10 +13,10 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Optionally, add interceptors
   apiClient.interceptors.request.use((config) => {
-    // const token = nuxtApp.$pinia.get('auth').token
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`
-    // }
+    const token = useCookie('authState')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token.value}`
+    }
     return config
   }, (error) => {
     return Promise.reject(error)

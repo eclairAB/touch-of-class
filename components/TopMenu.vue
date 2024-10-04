@@ -76,6 +76,8 @@
   </div>
 </template>
 <script setup>
+const { $api } = useNuxtApp();
+const { clearAuthToken } = useNuxtApp().$authState();
 import { useUserStore } from "@/stores/user";
 import { computed } from "vue";
 import { useTheme } from "vuetify";
@@ -129,7 +131,6 @@ const items = ref({
 const menuItem = [
   {
     title: "Log out",
-    value: "/touch-of-class/",
   },
 ];
 // const drawer = useState("value", () => false);
@@ -139,12 +140,24 @@ function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
 }
 
-function menuItemClick(item) {
+async function menuItemClick(item) {
   if (item.title == "Log out") {
-    userStore.setBranch({
-      select: "",
-      dialog: false,
-    });
+    const result = confirm("Are you sure you want to log out?");
+    if (result) {
+      userStore.setBranch({
+        select: "",
+        dialog: false,
+      });
+
+      try {
+        await $api.post(`/logout/`);
+        clearAuthToken();
+
+        window.location.href = "/touch-of-class/";
+      } catch (error) {
+        console.error(error);
+      }
+    }
   }
 }
 

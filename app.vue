@@ -6,7 +6,11 @@
       <TopMenu />
       <NuxtRouteAnnouncer />
       <NuxtPage />
-      {{ authState }}
+      <v-sheet class="pa-5" v-if="authState">
+        <v-chip>
+          <pre v-html="authState" />&nbsp;- debug security token
+        </v-chip>
+      </v-sheet>
     </v-app>
   </div>
 </template>
