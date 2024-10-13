@@ -26,7 +26,6 @@
             Add Client
           </v-btn>
         </v-row>
-        {{ form.packages }}
         <v-row class="ga-3">
           <v-autocomplete
             :closable-chips="_true"
