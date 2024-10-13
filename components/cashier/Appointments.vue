@@ -26,8 +26,9 @@
             Add Client
           </v-btn>
         </v-row>
+        {{ form.packages }}
         <v-row class="ga-3">
-          <v-combobox
+          <v-autocomplete
             :closable-chips="_true"
             v-model="form.packages"
             :items="packages"
@@ -38,11 +39,12 @@
             variant="outlined"
             item-title="name"
             clearable
+            :return-object="_true"
             @update:modelValue="form.amount_paid = grandTotal() / 2"
-          ></v-combobox>
+          ></v-autocomplete>
         </v-row>
         <v-row class="ga-3">
-          <v-combobox
+          <v-autocomplete
             :closable-chips="_true"
             v-model="form.combos"
             :items="combos"
@@ -53,11 +55,12 @@
             variant="outlined"
             item-title="name"
             clearable
+            :return-object="_true"
             @update:modelValue="form.amount_paid = grandTotal() / 2"
-          ></v-combobox>
+          ></v-autocomplete>
         </v-row>
         <v-row>
-          <v-combobox
+          <v-autocomplete
             :closable-chips="_true"
             v-model="form.services"
             :items="services"
@@ -68,8 +71,9 @@
             variant="outlined"
             item-title="name"
             clearable
+            :return-object="_true"
             @update:modelValue="form.amount_paid = grandTotal() / 2"
-          ></v-combobox>
+          ></v-autocomplete>
         </v-row>
       </v-form>
       <v-card flat border class="pa-5 mt-5">
@@ -405,8 +409,11 @@ const uploadFiles = async (appointment_id) => {
     const formData = createFormData(files.value);
     formData.append("appointment_id", appointment_id);
     console.log([files, appointment_id]);
-    console.log('formData', formData)
-    const response = await fileRequest('/product/upload_loyalty_cards', formData);
+    console.log("formData", formData);
+    const response = await fileRequest(
+      "/product/upload_loyalty_cards",
+      formData
+    );
     console.log("Files uploaded successfully:", formData);
   } catch (error) {
     console.error("Error uploading files:", error);
