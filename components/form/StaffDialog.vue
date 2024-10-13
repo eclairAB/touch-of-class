@@ -148,7 +148,7 @@
   </div>
 </template>
   <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
 const formDialog = useFormDialogStore();
@@ -165,7 +165,7 @@ const delete_confirmed = ref(false);
 
 const fetchRoles = async () => {
   try {
-    const response = await $api.get(`/staffs/roles/`);
+    const response = await request("get", `/staffs/roles/`);
     roles.value = response.data;
   } catch (error) {
     console.error("Failed to fetch roles data:", error);
@@ -207,7 +207,7 @@ function deleteAction() {
 }
 const createStaff = async () => {
   try {
-    const response = await $api.post(`/users/`, form.value);
+    const response = await request("post", `/users/`, form.value);
 
     alertDialog.setAlert({
       show: true,
@@ -217,9 +217,9 @@ const createStaff = async () => {
     closeDialog();
   } catch (error) {
     // console.error("Failed to create staff data:", error);
-    if (error.response.data) {
-      console.error(error.response.data);
-      form_errors.value = error.response.data.errors;
+    if (error.response.data_) {
+      console.error(error.response.data_);
+      form_errors.value = error.response.data_.errors;
     }
     alertDialog.setAlert({
       show: true,
@@ -230,7 +230,11 @@ const createStaff = async () => {
 };
 const updateStaff = async () => {
   try {
-    const response = await $api.put(`/users/${form.value.id}`, form.value);
+    const response = await request(
+      "put",
+      `/users/${form.value.id}`,
+      form.value
+    );
 
     alertDialog.setAlert({
       show: true,
@@ -249,7 +253,7 @@ const updateStaff = async () => {
 };
 const deleteStaff = async () => {
   try {
-    const response = await $api.delete(`/users/${form.value.id}`);
+    const response = await request("delete", `/users/${form.value.id}`);
 
     alertDialog.setAlert({
       show: true,

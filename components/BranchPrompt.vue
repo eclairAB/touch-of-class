@@ -33,8 +33,10 @@
   </div>
 </template>
 <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useUserStore } from "@/stores/user";
+import { useAlertStore } from "@/stores/alertDialog";
+const alertDialog = useAlertStore();
 const userStore = useUserStore();
 
 const branches = ref([]);
@@ -42,7 +44,7 @@ const _true = ref(true);
 
 const fetchBranchData = async () => {
   try {
-    const response = await $api.get(`/branches/`);
+    const response = await request("get", `/branches/`);
 
     branches.value = response.data;
   } catch (error) {

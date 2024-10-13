@@ -65,7 +65,7 @@
   </v-card>
 </template>
   <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useFormDialogStore } from "@/stores/formDialog";
 const formDialogStore = useFormDialogStore();
 const filter = ref({});
@@ -83,7 +83,7 @@ const listHeader = ref([
 const fetchUserData = async () => {
   try {
     const payload = filter.value;
-    const response = await $api.post(`/staffs/search/`, payload);
+    const response = await request("post", `/staffs/search/`, payload);
 
     clients.value = response.data;
   } catch (error) {

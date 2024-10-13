@@ -99,7 +99,7 @@
   </div>
 </template>
 <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
 
@@ -143,7 +143,7 @@ function deleteAction() {
 }
 const createPackage = async () => {
   try {
-    const response = await $api.post(`/packages/`, form.value);
+    const response = await request("post", `/packages/`, form.value);
     alertDialog.setAlert({
       show: true,
       color: "success",
@@ -161,7 +161,11 @@ const createPackage = async () => {
 };
 const updatePackage = async () => {
   try {
-    const response = await $api.put(`/packages/${form.value.id}`, form.value);
+    const response = await request(
+      "put",
+      `/packages/${form.value.id}`,
+      form.value
+    );
     alertDialog.setAlert({
       show: true,
       color: "success",
@@ -179,7 +183,7 @@ const updatePackage = async () => {
 };
 const deletePackage = async () => {
   try {
-    const response = await $api.delete(`/packages/${form.value.id}`);
+    const response = await request("delete", `/packages/${form.value.id}`);
     alertDialog.setAlert({
       show: true,
       color: "success",

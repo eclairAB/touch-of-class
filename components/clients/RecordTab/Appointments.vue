@@ -56,7 +56,12 @@
                 {{ service.service.name }}
                 <i class="text-grey text-caption"> - service</i>
                 <div>
-                  <v-chip v-if="service.branch_id" class="mt-2" size="small" color="success">
+                  <v-chip
+                    v-if="service.branch_id"
+                    class="mt-2"
+                    size="small"
+                    color="success"
+                  >
                     Availed
                   </v-chip>
                   <v-chip v-else size="small" color="info"> Unavailed </v-chip>
@@ -142,7 +147,7 @@
   </v-sheet>
 </template>
   <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useAlertStore } from "@/stores/alertDialog";
 import { useUserStore } from "@/stores/user";
 import { useFormDialogStore } from "@/stores/formDialog";
@@ -159,7 +164,7 @@ const searchStylistTimeout = ref(0);
 const fetchAppointmentsData = async () => {
   try {
     const client_id = formDialog.clientInfo.payload.id;
-    const response = await $api.get(`/appointments/${client_id}`);
+    const response = await request("get", `/appointments/${client_id}`);
 
     response.data.forEach((appointment) => {
       if (appointment.appointment_packages.length > 0) {
@@ -289,7 +294,7 @@ async function availPackage(payload, variation) {
   console.log(variation, payload);
 
   try {
-    await $api.post(`/product/avail/${variation}`, payload);
+    await request("post", `/product/avail/${variation}`, payload);
     availDialog.value.status = false;
     alertDialog.setAlert({
       show: true,
@@ -321,7 +326,7 @@ const fetchStylistData = async () => {
       search: availForm.value.stylist,
       role: "stylist",
     };
-    const response = await $api.post(`/staffs/search/`, filter);
+    const response = await request("post", `/staffs/search/`, filter);
 
     if (response.data.length == 0) {
       availForm.stylist = null;

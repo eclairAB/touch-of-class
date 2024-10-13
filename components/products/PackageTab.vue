@@ -108,7 +108,7 @@
   </div>
 </template>
 <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
 const formDialogStore = useFormDialogStore();
@@ -122,7 +122,7 @@ const onClickSeeAll = () => {
 
 const fetchPackageData = async () => {
   try {
-    const response = await $api.get(`/packages/`);
+    const response = await request("get", `/packages/`);
 
     packages.value = response.data;
   } catch (error) {

@@ -56,7 +56,8 @@
   </div>
 </template>
 <script setup>
-const { $api, $authState } = useNuxtApp();
+const { $authState } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useUserStore } from "@/stores/user";
 import { useAlertStore } from "@/stores/alertDialog";
 
@@ -75,21 +76,21 @@ function setFields() {
   switch (inputFill.value) {
     case "1":
       form.value = {
-        email: 'admin@example.com',
-        password: 'secret'
-      }
+        email: "admin@example.com",
+        password: "secret",
+      };
       break;
     case "2":
       form.value = {
-        email: 'cashier@example.com',
-        password: 'secret'
-      }
+        email: "cashier@example.com",
+        password: "secret",
+      };
       break;
     case "3":
       form.value = {
-        email: 'stylist@example.com',
-        password: 'secret'
-      }
+        email: "stylist@example.com",
+        password: "secret",
+      };
       break;
 
     default:
@@ -100,12 +101,11 @@ function setFields() {
 const authenticate = async () => {
   try {
     const payload = form.value;
-    const response = await $api.post(`/login/`, payload);
+    const response = await request("post", `/login/`, payload);
+    $authState().setAuthToken(response.token);
 
-    $authState().setAuthToken(response.data.token);
-
-    const route = response.data.role.name;
-    userStore.setUsername([response.data.first_name, response.data.last_name]);
+    const route = response.role.name;
+    userStore.setUsername([response.first_name, response.last_name]);
     userStore.setRole(route);
     navigateTo(`/${route}`);
 
@@ -115,10 +115,11 @@ const authenticate = async () => {
       content: "Login Successful.",
     });
   } catch (error) {
+    console.error(error);
     alertDialog.setAlert({
       show: true,
       color: "error",
-      content: error.response.data,
+      content: error.response.data_,
     });
   }
 };

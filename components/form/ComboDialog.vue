@@ -100,7 +100,7 @@
   </div>
 </template>
   <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
 
@@ -164,7 +164,7 @@ function deleteAction() {
 }
 const createCombo = async () => {
   try {
-    const response = await $api.post(`/combos/`, form.value);
+    const response = await request("post", `/combos/`, form.value);
     alertDialog.setAlert({
       show: true,
       color: "success",
@@ -182,7 +182,11 @@ const createCombo = async () => {
 };
 const updateCombo = async () => {
   try {
-    const response = await $api.put(`/combos/${form.value.id}`, form.value);
+    const response = await request(
+      "put",
+      `/combos/${form.value.id}`,
+      form.value
+    );
     alertDialog.setAlert({
       show: true,
       color: "success",
@@ -200,7 +204,7 @@ const updateCombo = async () => {
 };
 const deleteCombo = async () => {
   try {
-    const response = await $api.delete(`/combos/${form.value.id}`);
+    const response = await request("delete", `/combos/${form.value.id}`);
     alertDialog.setAlert({
       show: true,
       color: "success",
@@ -221,7 +225,7 @@ const deleteCombo = async () => {
 
 const fetchServiceData = async () => {
   try {
-    const response = await $api.get(`/services/`);
+    const response = await request("get", `/services/`);
 
     services.value = response.data;
   } catch (error) {

@@ -122,7 +122,7 @@
   </div>
 </template>
   <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
 const formDialogStore = useFormDialogStore();
@@ -136,7 +136,7 @@ const onClickSeeAll = () => {
 
 const fetchServiceData = async () => {
   try {
-    const response = await $api.get(`/branches/`);
+    const response = await request("get", `/branches/`);
 
     branches.value = response.data;
   } catch (error) {

@@ -103,7 +103,7 @@
   </div>
 </template>
 <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
 const formDialog = useFormDialogStore();
@@ -146,7 +146,7 @@ function deleteAction() {
 }
 const createClient = async () => {
   try {
-    const response = await $api.post(`/clients/`, form.value);
+    const response = await request("post", `/clients/`, form.value);
 
     alertDialog.setAlert({
       show: true,
@@ -165,7 +165,11 @@ const createClient = async () => {
 };
 const updateClient = async () => {
   try {
-    const response = await $api.put(`/clients/${form.value.id}`, form.value);
+    const response = await request(
+      "put",
+      `/clients/${form.value.id}`,
+      form.value
+    );
 
     alertDialog.setAlert({
       show: true,
@@ -184,7 +188,7 @@ const updateClient = async () => {
 };
 const deleteClient = async () => {
   try {
-    const response = await $api.delete(`/clients/${form.value.id}`);
+    const response = await request("delete", `/clients/${form.value.id}`);
 
     alertDialog.setAlert({
       show: true,

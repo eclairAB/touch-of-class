@@ -89,11 +89,17 @@
             item-title="name"
             clearable
           />
-          <v-sheet v-if="form.payment_type == 'Online' || form.payment_type == 'Card'">
+          <v-sheet
+            v-if="form.payment_type == 'Online' || form.payment_type == 'Card'"
+          >
             <v-text-field
               v-model="form.biller"
               label="Biller name"
-              :hint="form.payment_type == 'Online' ? `( Gcash, Paymaya, etc. )` : `( Credit, Debit )` "
+              :hint="
+                form.payment_type == 'Online'
+                  ? `( Gcash, Paymaya, etc. )`
+                  : `( Credit, Debit )`
+              "
               density="comfortable"
               variant="outlined"
             />
@@ -202,7 +208,9 @@
   </div>
 </template>
 <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
+const { getRootProps, getInputProps, isDragActive, createFormData } =
+  useNuxtApp().$useDropzoneFormData();
 import { useUserStore } from "@/stores/user";
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
@@ -260,7 +268,7 @@ function exitDialog() {
 }
 const fetchUserData = async () => {
   try {
-    const response = await $api.get(`/clients/`);
+    const response = await request("get", `/clients/`);
     clients.value = response.data;
   } catch (error) {
     alertDialog.setAlert({
@@ -272,7 +280,7 @@ const fetchUserData = async () => {
 };
 const fetchPackageData = async () => {
   try {
-    const response = await $api.get(`/packages/`);
+    const response = await request("get", `/packages/`);
 
     packages.value = response.data;
   } catch (error) {
@@ -285,7 +293,7 @@ const fetchPackageData = async () => {
 };
 const fetchComboData = async () => {
   try {
-    const response = await $api.get(`/combos/`);
+    const response = await request("get", `/combos/`);
 
     combos.value = response.data;
   } catch (error) {
@@ -298,7 +306,7 @@ const fetchComboData = async () => {
 };
 const fetchServiceData = async () => {
   try {
-    const response = await $api.get(`/services/`);
+    const response = await request("get", `/services/`);
 
     services.value = response.data;
   } catch (error) {
@@ -322,7 +330,7 @@ const createAppointment = async () => {
     payload.branch_id = userStore.branch.select.id;
     payload.amount_payable = grandTotal();
 
-    const response = await $api.post(`/appointments/`, form.value);
+    const response = await request("post", `/appointments/`, form.value);
     alertDialog.setAlert({
       show: true,
       color: "success",

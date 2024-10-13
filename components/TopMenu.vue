@@ -76,7 +76,7 @@
   </div>
 </template>
 <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 const { clearAuthToken } = useNuxtApp().$authState();
 import { useUserStore } from "@/stores/user";
 import { computed } from "vue";
@@ -150,7 +150,7 @@ async function menuItemClick(item) {
       });
 
       try {
-        await $api.post(`/logout/`);
+        await request("post", `/logout/`);
         clearAuthToken();
 
         window.location.href = "/touch-of-class/";

@@ -145,7 +145,7 @@
   </v-card>
 </template>
 <script setup>
-const { $api } = useNuxtApp();
+const { request } = useNuxtApp().$api;
 import { useFormDialogStore } from "@/stores/formDialog";
 const formDialogStore = useFormDialogStore();
 const itemsPerPage = ref(4);
@@ -157,7 +157,7 @@ const onClickSeeAll = () => {
 
 const fetchUserData = async () => {
   try {
-    const response = await $api.get(`/clients/`);
+    const response = await request("get", `/clients/`);
     let userArray = response.data;
 
     for (let id in userArray) {
