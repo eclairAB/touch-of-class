@@ -61,7 +61,6 @@ import { useUserStore } from "@/stores/user";
 import { useAlertStore } from "@/stores/alertDialog";
 
 const inputFill = ref(null);
-const accessToken = useState("accessToken", () => 123);
 const alertDialog = useAlertStore();
 const userStore = useUserStore();
 const form = ref({});
@@ -103,11 +102,10 @@ const authenticate = async () => {
     const payload = form.value;
     const response = await $api.post(`/login/`, payload);
 
-    // accessToken.value = response.data.token;
     $authState().setAuthToken(response.data.token);
 
     const route = response.data.role.name;
-    userStore.setUsername(form.email);
+    userStore.setUsername([response.data.first_name, response.data.last_name]);
     userStore.setRole(route);
     navigateTo(`/${route}`);
 

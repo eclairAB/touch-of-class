@@ -19,26 +19,32 @@
         >
           <strong>{{ item.name }} </strong>
           <i class="text-grey text-caption"> - {{ item.variation }}</i>
-          <div class="text-caption">
-            Availed sessions: {{ item.claimed }}/{{ item.sessions }}
+          <div v-if="item.claimed < item.sessions" class="text-caption">
+            <v-chip size="small" color="info">
+              Availed sessions: {{ item.claimed }}/{{ item.sessions }}
+            </v-chip>
           </div>
-          <v-card-actions>
+          <v-card-actions v-if="item.claimed < item.sessions">
             <v-btn color="blue" class="text-none" @click="availClicked(item)"
               >Avail</v-btn
             >
             <v-btn color="green" class="text-none">Make Payment</v-btn>
           </v-card-actions>
+          <div v-else>
+            <v-chip class="mt-2" size="small" color="success"> Availed </v-chip>
+          </div>
         </v-card>
         <!-- Combo -->
         <v-card flat border class="py-2 px-4" v-if="item.variation == 'combo'">
           <strong>{{ item.name }} </strong>
           <i class="text-grey text-caption"> - {{ item.variation }}</i>
-          <v-card-actions>
+          <v-card-actions v-if="item.services.length > item.claimed">
             <v-btn color="blue" class="text-none" @click="availClicked(item)"
               >Avail</v-btn
             >
             <v-btn color="green" class="text-none">Make Payment</v-btn>
           </v-card-actions>
+          <div v-else class="my-4"></div>
           <v-timeline align="start" truncate-line="end">
             <v-timeline-item
               v-for="(service, index1) in item.services"
@@ -49,7 +55,12 @@
               <div>
                 {{ service.service.name }}
                 <i class="text-grey text-caption"> - service</i>
-                <div class="text-caption">Unavailed</div>
+                <div>
+                  <v-chip v-if="service.branch_id" class="mt-2" size="small" color="success">
+                    Availed
+                  </v-chip>
+                  <v-chip v-else size="small" color="info"> Unavailed </v-chip>
+                </div>
               </div>
             </v-timeline-item>
           </v-timeline>
@@ -63,8 +74,10 @@
         >
           <strong>{{ item.name }} </strong>
           <i class="text-grey text-caption"> - {{ item.variation }}</i>
-          <div class="text-caption">Unavailed</div>
-          <v-card-actions>
+          <div v-if="!item.claimed" class="text-caption">
+            <v-chip size="small" color="info"> Unavailed </v-chip>
+          </div>
+          <v-card-actions v-if="!item.claimed">
             <v-btn
               color="blue"
               class="text-none"
@@ -73,10 +86,18 @@
             >
             <v-btn color="green" class="text-none">Make Payment</v-btn>
           </v-card-actions>
+          <div v-else>
+            <v-chip class="mt-2" size="small" color="success"> Availed </v-chip>
+          </div>
         </v-card>
       </v-timeline-item>
     </v-timeline>
-    <v-dialog v-model="availDialog.status" width="500" persistent>
+    <v-dialog
+      v-model="availDialog.status"
+      width="500"
+      persistent
+      @after-leave="availForm = {}"
+    >
       <v-card prepend-icon="mdi-content-cut" title="Product avail">
         <v-col class="px-5">
           <v-chip class="mb-4" color="orange">
@@ -84,23 +105,30 @@
             Availing in&nbsp;<strong>{{ userStore.branch.select.name }}</strong
             >&nbsp;Branch
           </v-chip>
+          <v-chip class="mb-4 ml-1" color="orange">
+            <v-icon icon="mdi-alert-circle" start></v-icon>
+            Cashiered by&nbsp;<strong>{{
+              `${userStore.username[0]} ${userStore.username[1]}`
+            }}</strong>
+          </v-chip>
           <v-autocomplete
-            v-model="availForm.stylist_id"
-            label="Select Catering Stylist"
-            :items="[]"
+            v-model="availForm.stylist"
+            label="Search Catering Stylist"
+            :items="stylists"
             density="comfortable"
             variant="outlined"
+            :item-title="stylistSelectorTitle"
             item-value="id"
+            @input="searchStylistEntry"
             chips
           ></v-autocomplete>
-          <!-- {{ availForm }} -->
         </v-col>
         <v-card-actions>
           <v-btn
             color="success"
             class="text-none"
             text="confirm avail"
-            @click="availDialog.status = false"
+            @click="confirmAvail()"
           ></v-btn>
           <v-btn
             color="error"
@@ -125,6 +153,8 @@ const userStore = useUserStore();
 const appointments = ref([]);
 const availDialog = ref({});
 const availForm = ref({});
+const stylists = ref([]);
+const searchStylistTimeout = ref(0);
 
 const fetchAppointmentsData = async () => {
   try {
@@ -132,14 +162,14 @@ const fetchAppointmentsData = async () => {
     const response = await $api.get(`/appointments/${client_id}`);
 
     response.data.forEach((appointment) => {
-      if (appointment.package_redeems.length > 0) {
-        insertPackage(appointment.package_redeems);
+      if (appointment.appointment_packages.length > 0) {
+        insertPackage(appointment.appointment_packages);
       }
-      if (appointment.combo_redeems.length > 0) {
-        insertCombo(appointment.combo_redeems);
+      if (appointment.appointment_combos.length > 0) {
+        insertCombo(appointment.appointment_combos);
       }
-      if (appointment.service_redeems.length > 0) {
-        insertService(appointment.service_redeems);
+      if (appointment.appointment_services.length > 0) {
+        insertService(appointment.appointment_services);
       }
     });
     // appointments.value = response.data;
@@ -166,11 +196,15 @@ function insertPackage(package_redeems) {
 
     // If package doesn't exist, add it with initial values
     if (!existingPackage) {
+      const claims = redeem.package_redeems.filter(
+        (item) => item.branch_id
+      ).length;
       acc.push({
+        package_redeem_id: redeem.id,
         variation: "package",
         name: redeem.package.name,
         sessions: redeem.package.sessions,
-        claimed: redeem.branch_id ? 1 : 0,
+        claimed: claims,
         created_at: redeem.created_at,
       });
     } else {
@@ -192,11 +226,16 @@ function insertCombo(combo_redeems) {
 
     // If package doesn't exist, add it with initial values
     if (!existingCombo) {
+      console.log("comboo", redeem);
+      const claims = redeem.combo_redeems.filter(
+        (item) => item.branch_id
+      ).length;
       acc.push({
+        combo_redeem_id: redeem.id,
         variation: "combo",
         name: redeem.combo.name,
-        services: redeem.combo.combo_services,
-        claimed: redeem.branch_id ? 1 : 0,
+        services: redeem.combo_redeems,
+        claimed: claims,
         created_at: redeem.created_at,
       });
     } else {
@@ -214,9 +253,10 @@ function insertCombo(combo_redeems) {
 function insertService(service_redeems) {
   service_redeems.forEach((service) => {
     appointments.value.unshift({
+      service_redeem_id: service.id,
       variation: "service",
       name: service.service.name,
-      claimed: service.branch_id ? 1 : 0,
+      claimed: service.service_redeems[0].branch_id ? 1 : 0,
       created_at: service.created_at,
     });
   });
@@ -225,4 +265,78 @@ function availClicked(product) {
   availDialog.value.status = true;
   availForm.value.form = product;
 }
+function confirmAvail() {
+  const variation =
+    availForm.value.form.variation || availForm.value.form.item.variation;
+  let payload = {
+    branch_id: userStore.branch.select.id,
+    stylist_id: availForm.value.stylist,
+  };
+  switch (variation) {
+    case "package":
+      payload.id = availForm.value.form.package_redeem_id;
+      break;
+    case "combo":
+      payload.id = availForm.value.form.combo_redeem_id;
+      break;
+    default:
+      payload.id = availForm.value.form.item.service_redeem_id;
+      break;
+  }
+  availPackage(payload, variation);
+}
+async function availPackage(payload, variation) {
+  console.log(variation, payload);
+
+  try {
+    await $api.post(`/product/avail/${variation}`, payload);
+    availDialog.value.status = false;
+    alertDialog.setAlert({
+      show: true,
+      color: "success",
+      content: `${variation.toUpperCase()} availed!`,
+    });
+
+    appointments.value = [];
+    fetchAppointmentsData();
+  } catch (error) {
+    availDialog.value.status = false;
+    alertDialog.setAlert({
+      show: true,
+      color: "error",
+      content: `Failed to avail ${variation}.`,
+    });
+  }
+}
+function searchStylistEntry() {
+  clearTimeout(searchStylistTimeout.value);
+  searchStylistTimeout.value = setTimeout(() => {
+    // Stopped typing
+    fetchStylistData();
+  }, 1000);
+}
+const fetchStylistData = async () => {
+  try {
+    const filter = {
+      search: availForm.value.stylist,
+      role: "stylist",
+    };
+    const response = await $api.post(`/staffs/search/`, filter);
+
+    if (response.data.length == 0) {
+      availForm.stylist = null;
+    } else {
+      stylists.value = response.data;
+    }
+  } catch (error) {
+    console.error("Failed to fetch user data:", error);
+  }
+};
+const stylistSelectorTitle = (item) => {
+  if (item.id) {
+    return `${item.first_name} ${item.last_name}`;
+  } else {
+    availForm.value.stylist = "";
+  }
+};
 </script>

@@ -15,7 +15,7 @@
         </template>
 
         <v-app-bar-title>
-          {{ username ? `Greetings ${username}!` : "Good day!" }}
+          {{ `Greeting ${username[0]}!` }}
 
           <v-chip
             class="ml-5"
