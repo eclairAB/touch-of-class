@@ -46,7 +46,7 @@ const fetchBranchData = async () => {
   try {
     const response = await request("get", `/branches/`);
 
-    branches.value = response.data;
+    branches.value = response;
   } catch (error) {
     alertDialog.setAlert({
       show: true,

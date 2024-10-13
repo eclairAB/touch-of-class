@@ -72,6 +72,28 @@
           ></v-combobox>
         </v-row>
       </v-form>
+      <v-card flat border class="pa-5 mt-5">
+        <v-card-title>
+          <h4>Loyalty Card Uploads</h4>
+        </v-card-title>
+        <div v-bind="getRootProps()" class="dropzone">
+          <input v-bind="getInputProps()" />
+          <p v-if="isDragActive">Drop the image files here ...</p>
+          <p v-else>Drag image files here, or click to select files</p>
+        </div>
+
+        <!-- Image Previews -->
+        <h5 v-if="imagePreviews.length">Uploads Preview</h5>
+        <div v-if="imagePreviews.length" class="previews mt-5">
+          <div
+            v-for="(image, index) in imagePreviews"
+            :key="index"
+            class="image-preview"
+          >
+            <img :src="image" alt="Preview" />
+          </div>
+        </div>
+      </v-card>
     </v-card>
     <v-card flat border class="w-50 h-100 px-5 pb-5">
       <v-card-title class="my-5">
@@ -208,21 +230,50 @@
   </div>
 </template>
 <script setup>
-const { request } = useNuxtApp().$api;
-const { getRootProps, getInputProps, isDragActive, createFormData } =
-  useNuxtApp().$useDropzoneFormData();
+const { request, fileRequest } = useNuxtApp().$api;
+const {
+  getRootProps,
+  getInputProps,
+  isDragActive,
+  acceptedFiles,
+  createFormData,
+} = useNuxtApp().$useDropzoneFormData({
+  accept: {
+    "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"], // Allow only image file types
+  },
+});
 import { useUserStore } from "@/stores/user";
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
 const userStore = useUserStore();
 const formDialogStore = useFormDialogStore();
 const alertDialog = useAlertStore();
+
 const clients = ref([]);
 const packages = ref([]);
 const combos = ref([]);
 const services = ref([]);
 
 const form = ref({});
+
+const files = ref([]);
+const imagePreviews = ref([]);
+
+watch(acceptedFiles, (newFiles) => {
+  files.value = newFiles;
+  imagePreviews.value = [];
+
+  // Generate image preview URLs for each file (if it's an image)
+  newFiles.forEach((file) => {
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreviews.value.push(e.target.result); // Add the base64 image to the preview list
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+});
 
 const _true = ref(true);
 const _false = ref(false);
@@ -269,7 +320,7 @@ function exitDialog() {
 const fetchUserData = async () => {
   try {
     const response = await request("get", `/clients/`);
-    clients.value = response.data;
+    clients.value = response;
   } catch (error) {
     alertDialog.setAlert({
       show: true,
@@ -282,7 +333,7 @@ const fetchPackageData = async () => {
   try {
     const response = await request("get", `/packages/`);
 
-    packages.value = response.data;
+    packages.value = response;
   } catch (error) {
     alertDialog.setAlert({
       show: true,
@@ -295,7 +346,7 @@ const fetchComboData = async () => {
   try {
     const response = await request("get", `/combos/`);
 
-    combos.value = response.data;
+    combos.value = response;
   } catch (error) {
     alertDialog.setAlert({
       show: true,
@@ -308,7 +359,7 @@ const fetchServiceData = async () => {
   try {
     const response = await request("get", `/services/`);
 
-    services.value = response.data;
+    services.value = response;
   } catch (error) {
     alertDialog.setAlert({
       show: true,
@@ -336,7 +387,10 @@ const createAppointment = async () => {
       color: "success",
       content: "New Appointment Created!",
     });
+    uploadFiles(response.id);
     form.value = {};
+    files.value = [];
+    imagePreviews.value = [];
   } catch (error) {
     console.error(error);
     alertDialog.setAlert({
@@ -344,6 +398,18 @@ const createAppointment = async () => {
       color: "error",
       content: "Failed to Create Appointment.",
     });
+  }
+};
+const uploadFiles = async (appointment_id) => {
+  try {
+    const formData = createFormData(files.value);
+    formData.append("appointment_id", appointment_id);
+    console.log([files, appointment_id]);
+    console.log('formData', formData)
+    const response = await fileRequest('/product/upload_loyalty_cards', formData);
+    console.log("Files uploaded successfully:", formData);
+  } catch (error) {
+    console.error("Error uploading files:", error);
   }
 };
 </script>

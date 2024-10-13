@@ -85,7 +85,7 @@ const fetchUserData = async () => {
     const payload = filter.value;
     const response = await request("post", `/staffs/search/`, payload);
 
-    clients.value = response.data;
+    clients.value = response;
   } catch (error) {
     console.error("Failed to fetch user data:", error);
   }

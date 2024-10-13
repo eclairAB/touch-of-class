@@ -158,8 +158,7 @@ const onClickSeeAll = () => {
 const fetchUserData = async () => {
   try {
     const response = await request("get", `/clients/`);
-    let userArray = response.data;
-
+    let userArray = response;
     for (let id in userArray) {
       let _combo = 0;
       let _session = 0;
@@ -177,7 +176,7 @@ const fetchUserData = async () => {
       userArray[id].session = _session;
     }
 
-    clients.value = response.data;
+    clients.value = response;
   } catch (error) {
     console.error("Failed to fetch user data:", error);
   }

@@ -118,7 +118,7 @@ const fetchServiceData = async () => {
   try {
     const response = await request("get", `/services/`);
 
-    services.value = response.data;
+    services.value = response;
   } catch (error) {
     alertDialog.setClient({
       show: true,

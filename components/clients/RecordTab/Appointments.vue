@@ -166,7 +166,7 @@ const fetchAppointmentsData = async () => {
     const client_id = formDialog.clientInfo.payload.id;
     const response = await request("get", `/appointments/${client_id}`);
 
-    response.data.forEach((appointment) => {
+    response.forEach((appointment) => {
       if (appointment.appointment_packages.length > 0) {
         insertPackage(appointment.appointment_packages);
       }
@@ -177,7 +177,7 @@ const fetchAppointmentsData = async () => {
         insertService(appointment.appointment_services);
       }
     });
-    // appointments.value = response.data;
+    // appointments.value = response;
   } catch (error) {
     alertDialog.setAlert({
       show: true,
@@ -231,7 +231,6 @@ function insertCombo(combo_redeems) {
 
     // If package doesn't exist, add it with initial values
     if (!existingCombo) {
-      console.log("comboo", redeem);
       const claims = redeem.combo_redeems.filter(
         (item) => item.branch_id
       ).length;
@@ -291,7 +290,6 @@ function confirmAvail() {
   availPackage(payload, variation);
 }
 async function availPackage(payload, variation) {
-  console.log(variation, payload);
 
   try {
     await request("post", `/product/avail/${variation}`, payload);
@@ -328,10 +326,10 @@ const fetchStylistData = async () => {
     };
     const response = await request("post", `/staffs/search/`, filter);
 
-    if (response.data.length == 0) {
+    if (response.length == 0) {
       availForm.stylist = null;
     } else {
-      stylists.value = response.data;
+      stylists.value = response;
     }
   } catch (error) {
     console.error("Failed to fetch user data:", error);

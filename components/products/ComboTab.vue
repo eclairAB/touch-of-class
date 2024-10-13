@@ -140,7 +140,7 @@ const fetchServiceData = async () => {
   try {
     const response = await request("get", `/combos/`);
 
-    combos.value = response.data;
+    combos.value = response;
   } catch (error) {
     alertDialog.setClient({
       show: true,

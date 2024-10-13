@@ -164,7 +164,7 @@ function deleteAction() {
 }
 const createCombo = async () => {
   try {
-    const response = await request("post", `/combos/`, form.value);
+    await request("post", `/combos/`, form.value);
     alertDialog.setAlert({
       show: true,
       color: "success",
@@ -182,7 +182,7 @@ const createCombo = async () => {
 };
 const updateCombo = async () => {
   try {
-    const response = await request(
+    await request(
       "put",
       `/combos/${form.value.id}`,
       form.value
@@ -204,7 +204,7 @@ const updateCombo = async () => {
 };
 const deleteCombo = async () => {
   try {
-    const response = await request("delete", `/combos/${form.value.id}`);
+    await request("delete", `/combos/${form.value.id}`);
     alertDialog.setAlert({
       show: true,
       color: "success",
@@ -227,7 +227,7 @@ const fetchServiceData = async () => {
   try {
     const response = await request("get", `/services/`);
 
-    services.value = response.data;
+    services.value = response;
   } catch (error) {
     alertDialog.setClient({
       show: true,

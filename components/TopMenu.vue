@@ -94,11 +94,11 @@ const items = ref({
       title: "Homepage",
       value: `/touch-of-class/admin`,
     },
-    {
-      icon: "mdi-emoticon-happy",
-      title: "Clients",
-      value: "/touch-of-class/admin/clients",
-    },
+    // {
+    //   icon: "mdi-emoticon-happy",
+    //   title: "Clients",
+    //   value: "/touch-of-class/admin/clients",
+    // },
     {
       icon: "mdi-hair-dryer",
       title: "Products",

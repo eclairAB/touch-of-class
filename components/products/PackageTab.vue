@@ -124,7 +124,7 @@ const fetchPackageData = async () => {
   try {
     const response = await request("get", `/packages/`);
 
-    packages.value = response.data;
+    packages.value = response;
   } catch (error) {
     alertDialog.setAlert({
       show: true,
