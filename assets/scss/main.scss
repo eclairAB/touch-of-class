@@ -13,7 +13,7 @@
   border: solid 1px red !important;
 }
 
-.tab-2-dialog {
+.tab-2-dialog, .tab-3-dialog {
   & .v-tabs-window {
     overflow: auto !important;
   }
@@ -43,4 +43,17 @@
   height: 100px;
   object-fit: cover;
   border: 1px solid #ccc;
+}
+
+.view-loyalty-card-container {
+  & img {
+    height: 100px;
+    transition: 0.1s;
+    border: #ffffff00 solid 3px;
+
+    &:hover {
+      border: solid #ffe0b2 3px;
+      background-color: #ffe0b2;
+    }
+  }
 }

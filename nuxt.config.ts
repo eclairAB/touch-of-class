@@ -42,7 +42,7 @@ export default defineNuxtConfig({
     baseUrl: 'http://localhost/api', // Laravel API
   },
   modules: [
-    // 'nuxt-auth-sanctum',
+    'nuxt-easy-lightbox',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
