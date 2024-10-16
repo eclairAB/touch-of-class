@@ -1,7 +1,12 @@
 <template>
   <div class="text-center">
     <client-only>
-      <v-dialog v-model="userStore.branch.dialog" width="400" persistent>
+      <v-dialog
+        v-model="userStore.branch.dialog"
+        width="400"
+        persistent
+        @afterEnter="fetchBranchData"
+      >
         <!-- {{ userStore.branch }} -->
         <v-card class="">
           <v-card-title class="my-5">
@@ -55,5 +60,4 @@ const fetchBranchData = async () => {
     });
   }
 };
-fetchBranchData();
 </script>

@@ -1,6 +1,10 @@
 <template>
   <v-sheet class="pa-5 justify-center d-flex flex-wrap ga-2">
-    <div v-for="(card, index) in cards" :key="index" class="view-loyalty-card-container">
+    <div
+      v-for="(card, index) in cards"
+      :key="index"
+      class="view-loyalty-card-container"
+    >
       <img :src="card" alt="Loyalty Card" @click="() => showImg(index)" />
     </div>
     <VueEasyLightbox
@@ -25,7 +29,13 @@ const indexRef = ref(0);
 async function fetchCards() {
   try {
     const client_id = formDialog.clientInfo.payload.id;
-    cards.value = await request("get", `/product/fetch_loyalty_card/${client_id}`);
+    const response = await request(
+      "get",
+      `/product/fetch_loyalty_card/${client_id}`
+    );
+    Object.values(response).forEach((card) => {
+      cards.value.push(card);
+    });
   } catch (error) {
     console.error(error);
     alertDialog.setAlert({
