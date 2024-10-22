@@ -19,11 +19,18 @@
         >
           <strong>{{ item.name }} </strong>
           <i class="text-grey text-caption"> - {{ item.variation }}</i>
-          <div v-if="item.claimed < item.sessions" class="text-caption">
+          <v-row
+            v-if="item.claimed < item.sessions"
+            class="text-caption ma-1 ga-2"
+          >
             <v-chip size="small" color="info">
               Availed sessions: {{ item.claimed }}/{{ item.sessions }}
             </v-chip>
-          </div>
+            <v-chip v-if="item.balance != 0" size="small" color="warning">
+              Balance: ₱{{ item.balance }}
+            </v-chip>
+            <v-chip v-else size="small" color="success"> Fully paid </v-chip>
+          </v-row>
           <v-card-actions v-if="item.claimed < item.sessions">
             <v-btn color="blue" class="text-none" @click="availClicked(item)"
               >Avail</v-btn
@@ -38,6 +45,15 @@
         <v-card flat border class="py-2 px-4" v-if="item.variation == 'combo'">
           <strong>{{ item.name }} </strong>
           <i class="text-grey text-caption"> - {{ item.variation }}</i>
+          <v-row
+            v-if="item.services.length > item.claimed"
+            class="text-caption ma-1 ga-2"
+          >
+            <v-chip v-if="item.balance != 0" size="small" color="warning">
+              Balance: ₱{{ item.balance }}
+            </v-chip>
+            <v-chip v-else size="small" color="success"> Fully paid </v-chip>
+          </v-row>
           <v-card-actions v-if="item.services.length > item.claimed">
             <v-btn color="blue" class="text-none" @click="availClicked(item)"
               >Avail</v-btn
@@ -79,11 +95,15 @@
         >
           <strong>{{ item.name }} </strong>
           <i class="text-grey text-caption"> - {{ item.variation }}</i>
-          <div v-if="!item.claimed" class="text-caption">
+          <v-row v-if="!item.claimed" class="text-caption ma-1 ga-2">
             <v-chip size="small" color="info"> Unavailed </v-chip>
-          </div>
+            <v-chip v-if="item.balance != 0" size="small" color="warning">
+              Balance: ₱{{ item.balance }}
+            </v-chip>
+          </v-row>
           <v-card-actions v-if="!item.claimed">
             <v-btn
+              :disabled="item.balance != 0"
               color="blue"
               class="text-none"
               @click="availClicked({ item })"
@@ -210,6 +230,7 @@ function insertPackage(package_redeems) {
         name: redeem.package.name,
         sessions: redeem.package.sessions,
         claimed: claims,
+        balance: redeem.balance,
         created_at: redeem.created_at,
       });
     } else {
@@ -240,6 +261,7 @@ function insertCombo(combo_redeems) {
         name: redeem.combo.name,
         services: redeem.combo_redeems,
         claimed: claims,
+        balance: redeem.balance,
         created_at: redeem.created_at,
       });
     } else {
@@ -256,11 +278,13 @@ function insertCombo(combo_redeems) {
 }
 function insertService(service_redeems) {
   service_redeems.forEach((service) => {
+    console.log(service)
     appointments.value.unshift({
       service_redeem_id: service.id,
       variation: "service",
       name: service.service.name,
       claimed: service.service_redeems[0].branch_id ? 1 : 0,
+      balance: service.balance,
       created_at: service.created_at,
     });
   });
@@ -290,7 +314,6 @@ function confirmAvail() {
   availPackage(payload, variation);
 }
 async function availPackage(payload, variation) {
-
   try {
     await request("post", `/product/avail/${variation}`, payload);
     availDialog.value.status = false;
