@@ -32,7 +32,7 @@
             <v-chip v-else size="small" color="success"> Fully paid </v-chip>
           </v-row>
           <v-card-actions v-if="item.claimed < item.sessions">
-            <v-btn color="blue" class="text-none" @click="availClicked(item)"
+            <v-btn :disabled="item.canAvail < 1" color="blue" class="text-none" @click="availClicked(item)"
               >Avail</v-btn
             >
             <v-btn color="green" class="text-none">Make Payment</v-btn>
@@ -55,7 +55,7 @@
             <v-chip v-else size="small" color="success"> Fully paid </v-chip>
           </v-row>
           <v-card-actions v-if="item.services.length > item.claimed">
-            <v-btn color="blue" class="text-none" @click="availClicked(item)"
+            <v-btn :disabled="item.canAvail < 1" color="blue" class="text-none" @click="availClicked(item)"
               >Avail</v-btn
             >
             <v-btn color="green" class="text-none">Make Payment</v-btn>
@@ -224,12 +224,16 @@ function insertPackage(package_redeems) {
       const claims = redeem.package_redeems.filter(
         (item) => item.branch_id
       ).length;
+      const unavailedPaid = redeem.package_redeems.filter((item) => {
+        return item.branch_id == null && item.paid;
+      }).length;
       acc.push({
         package_redeem_id: redeem.id,
         variation: "package",
         name: redeem.package.name,
         sessions: redeem.package.sessions,
         claimed: claims,
+        canAvail: unavailedPaid,
         balance: redeem.balance,
         created_at: redeem.created_at,
       });
@@ -255,12 +259,17 @@ function insertCombo(combo_redeems) {
       const claims = redeem.combo_redeems.filter(
         (item) => item.branch_id
       ).length;
+      const unavailedPaid = redeem.combo_redeems.filter((item) => {
+        return item.branch_id == null && item.paid;
+      }).length;
+
       acc.push({
         combo_redeem_id: redeem.id,
         variation: "combo",
         name: redeem.combo.name,
         services: redeem.combo_redeems,
         claimed: claims,
+        canAvail: unavailedPaid,
         balance: redeem.balance,
         created_at: redeem.created_at,
       });
@@ -278,7 +287,6 @@ function insertCombo(combo_redeems) {
 }
 function insertService(service_redeems) {
   service_redeems.forEach((service) => {
-    console.log(service)
     appointments.value.unshift({
       service_redeem_id: service.id,
       variation: "service",
