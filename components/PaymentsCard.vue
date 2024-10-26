@@ -30,7 +30,7 @@
       class="commision-card px-10 py-5"
       @update:options="loadItems"
     ></v-data-table-server>
-    {{ paymentTable.serverItems }}
+    <!-- {{ paymentTable.serverItems }} -->
   </v-card>
 </template>
 <script setup>
@@ -69,14 +69,15 @@ const paymentTable = ref({
       title: "Payment Amount",
       align: "start",
       sortable: false,
-      key: "name",
+      key: "amount_paid",
     },
-    { title: "Client Name", key: "calories", align: "end" },
+    { title: "Client Name", key: "name", align: "end" },
     { title: "Cashier", key: "cashier.first_name", align: "end" },
     { title: "Branch", key: "branch.name", align: "end" },
-    { title: "Reference No.", key: "carbs", align: "end" },
+    { title: "Payment Method", key: "payment_method", align: "end" },
+    { title: "Reference No.", key: "reference_no", align: "end" },
     { title: "Milestone", key: "payment_milestone", align: "end" },
-    { title: "Date Time", key: "created_at", align: "end" },
+    { title: "Date", key: "created_at", align: "end" },
   ],
   search: "",
   serverItems: [],
@@ -88,6 +89,31 @@ onMounted(() => {
   commissionTable.value = commissionTable_;
   desserts.value = $myObject.dessert;
 });
+
+function formatDate(inputDate) {
+  const date = new Date(inputDate);
+  const options = { year: "numeric", month: "short", day: "numeric" };
+  return date.toLocaleDateString("en-US", options).replace(",", "");
+}
+function clientName(response) {
+  let firstName = "";
+  let lastName = "";
+
+  if (response.appointment_package) {
+    firstName = response.appointment_package.appointment.client.first_name;
+    lastName = response.appointment_package.appointment.client.last_name;
+  }
+  if (response.appointment_combo) {
+    firstName = response.appointment_combo.appointment.client.first_name;
+    lastName = response.appointment_combo.appointment.client.last_name;
+  }
+  if (response.appointment_service) {
+    firstName = response.appointment_service.appointment.client.first_name;
+    lastName = response.appointment_service.appointment.client.last_name;
+  }
+
+  return `${firstName} ${lastName}`;
+}
 
 const FakeAPI = {
   async fetch({ page, itemsPerPage, sortBy }) {
@@ -118,8 +144,8 @@ const FakeAPI = {
 
 function loadItems({ page, itemsPerPage, sortBy }) {
   paymentTable.value.loading = true;
-  fetchRedeems()
-  // fetchPayments()
+  // fetchRedeems()
+  fetchPayments();
 }
 async function fetchRedeems() {
   try {
@@ -128,17 +154,26 @@ async function fetchRedeems() {
     paymentTable.value.serverItems = response;
     paymentTable.value.loading = false;
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
 async function fetchPayments() {
   try {
-    const response = await request("get", `/payments/`);
-    console.log(12, response);
+    let response = await request("get", `/payments/`);
+
+    for (let i in response) {
+      response[i].created_at = formatDate(response[i].created_at);
+      response[i].name = clientName(response[i]);
+
+      if (response[i].reference_no == null) {
+        response[i].reference_no = "N/A";
+      }
+    }
+
     paymentTable.value.serverItems = response;
     paymentTable.value.loading = false;
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
 // fetchRedeems();

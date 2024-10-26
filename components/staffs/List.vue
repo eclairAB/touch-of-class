@@ -49,11 +49,11 @@
           <v-btn
             flat
             rounded
-            readonly
             color="grey-lighten-3"
             class="text-none ml-3 mb-1"
             size="small"
             prepend-icon="mdi-download"
+            @click="generateReport(item)"
           >
             Generate Report
           </v-btn>
@@ -65,8 +65,9 @@
   </v-card>
 </template>
   <script setup>
-const { request } = useNuxtApp().$api;
+import axios from "axios";
 import { useFormDialogStore } from "@/stores/formDialog";
+const { request } = useNuxtApp().$api;
 const formDialogStore = useFormDialogStore();
 const filter = ref({});
 const clients = ref([]);
@@ -107,6 +108,35 @@ function searchEntry() {
     // Stopped typing
     fetchUserData();
   }, 1000);
+}
+
+async function generateReport(staff) {
+  try {
+    const config = useRuntimeConfig();
+    const response = await axios.get(
+      `${config.public.apiBaseUrl}/reports/staff/${staff.id}`,
+      {
+        responseType: "blob", // Set response type to blob for binary data
+      }
+    );
+
+    const blobUrl = URL.createObjectURL(
+      new Blob([response.data], { type: "application/pdf" })
+    );
+
+    // Create a link and trigger the download
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.setAttribute("download", `${staff.first_name}-report.pdf`); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+
+    // Cleanup
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
+  } catch (error) {
+    console.error(error);
+  }
 }
 </script>
   

@@ -66,11 +66,11 @@
                     <v-btn
                       flat
                       rounded
-                      readonly
                       color="grey-lighten-3"
                       class="text-none ml-3 mb-1"
                       size="small"
                       prepend-icon="mdi-download"
+                      @click="generateReport(item.raw)"
                     >
                       Generate Report
                     </v-btn>
@@ -122,9 +122,10 @@
   </div>
 </template>
   <script setup>
-const { request } = useNuxtApp().$api;
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
+import axios from 'axios';
+const { request } = useNuxtApp().$api;
 const formDialogStore = useFormDialogStore();
 const alertDialog = useAlertStore();
 const itemsPerPage = ref(8);
@@ -158,6 +159,32 @@ function addBranch() {
 }
 function exitDialog() {
   fetchServiceData();
+}
+
+async function generateReport(branch) {
+  try {
+    const config = useRuntimeConfig();
+    const response = await axios.get(`${config.public.apiBaseUrl}/reports/branch/${branch.id}`, {
+      responseType: "blob", // Set response type to blob for binary data
+    });
+
+    const blobUrl = URL.createObjectURL(
+      new Blob([response.data], { type: "application/pdf" })
+    );
+
+    // Create a link and trigger the download
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.setAttribute("download", `${branch.name}-report.pdf`); // Set the file name
+    document.body.appendChild(link);
+    link.click();
+
+    // Cleanup
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
+  } catch (error) {
+    console.error(error);
+  }
 }
 </script>
   
