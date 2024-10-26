@@ -82,7 +82,7 @@
               </v-list-item>
 
               <v-table class="text-caption" density="compact">
-                <tbody>
+                <tbody v-if="false">
                   <tr align="right">
                     <th>Payment Balances:</th>
 

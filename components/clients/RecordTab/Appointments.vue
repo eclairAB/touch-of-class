@@ -7,6 +7,7 @@
         dot-color="pink"
         size="small"
       >
+        <!-- {{ item }} -->
         <template v-slot:opposite>
           <strong class="me-4">{{ formatDate(item.created_at) }}</strong>
         </template>
@@ -32,10 +33,22 @@
             <v-chip v-else size="small" color="success"> Fully paid </v-chip>
           </v-row>
           <v-card-actions v-if="item.claimed < item.sessions">
-            <v-btn :disabled="item.canAvail < 1" color="blue" class="text-none" @click="availClicked(item)"
+            <v-btn
+              :disabled="item.canAvail < 1"
+              color="blue"
+              class="text-none"
+              @click="availClicked(item)"
               >Avail</v-btn
             >
-            <v-btn color="green" class="text-none">Make Payment</v-btn>
+            <v-btn
+              :disabled="item.balance == 0"
+              color="green"
+              :class="`text-none package_redeem_${item.package_redeem_id}`"
+              @click="
+                makePayment(`package_redeem_${item.package_redeem_id}`, item)
+              "
+              >Make Payment</v-btn
+            >
           </v-card-actions>
           <div v-else>
             <v-chip class="mt-2" size="small" color="success"> Availed </v-chip>
@@ -55,10 +68,20 @@
             <v-chip v-else size="small" color="success"> Fully paid </v-chip>
           </v-row>
           <v-card-actions v-if="item.services.length > item.claimed">
-            <v-btn :disabled="item.canAvail < 1" color="blue" class="text-none" @click="availClicked(item)"
+            <v-btn
+              :disabled="item.canAvail < 1"
+              color="blue"
+              class="text-none"
+              @click="availClicked(item)"
               >Avail</v-btn
             >
-            <v-btn color="green" class="text-none">Make Payment</v-btn>
+            <v-btn
+              :disabled="item.balance == 0"
+              color="green"
+              :class="`text-none combo_redeem_${item.combo_redeem_id}`"
+              @click="makePayment(`combo_redeem_${item.combo_redeem_id}`, item)"
+              >Make Payment</v-btn
+            >
           </v-card-actions>
           <div v-else class="my-4"></div>
           <v-timeline align="start" truncate-line="end">
@@ -109,7 +132,15 @@
               @click="availClicked({ item })"
               >Avail</v-btn
             >
-            <v-btn color="green" class="text-none">Make Payment</v-btn>
+            <v-btn
+              :disabled="item.balance == 0"
+              color="green"
+              :class="`text-none service_redeem_${item.service_redeem_id}`"
+              @click="
+                makePayment(`service_redeem_${item.service_redeem_id}`, item)
+              "
+              >Make Payment</v-btn
+            >
           </v-card-actions>
           <div v-else>
             <v-chip class="mt-2" size="small" color="success"> Availed </v-chip>
@@ -164,6 +195,10 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <clients-record-tab-make-payment-dialog
+      :activatorClass="paymentDialog"
+      @clearPaymentDialog="closePaymentDialog"
+    />
   </v-sheet>
 </template>
   <script setup>
@@ -180,6 +215,8 @@ const availDialog = ref({});
 const availForm = ref({});
 const stylists = ref([]);
 const searchStylistTimeout = ref(0);
+const paymentDialog = ref([]);
+const prevPaymentDialogCounter = ref(0);
 
 const fetchAppointmentsData = async () => {
   try {
@@ -236,6 +273,7 @@ function insertPackage(package_redeems) {
         canAvail: unavailedPaid,
         balance: redeem.balance,
         created_at: redeem.created_at,
+        product_price: redeem.package.price,
       });
     } else {
       // If the package exists, increment claimed if branch_id is not null
@@ -272,6 +310,7 @@ function insertCombo(combo_redeems) {
         canAvail: unavailedPaid,
         balance: redeem.balance,
         created_at: redeem.created_at,
+        product_price: redeem.combo.price,
       });
     } else {
       // If the package exists, increment claimed if branch_id is not null
@@ -373,4 +412,20 @@ const stylistSelectorTitle = (item) => {
     availForm.value.stylist = "";
   }
 };
+function makePayment(activatorClass, item) {
+  paymentDialog.value = [activatorClass, item];
+  setTimeout(() => {
+    if (prevPaymentDialogCounter.value < 1) {
+      document.querySelector(`.${activatorClass}`).click();
+    }
+    prevPaymentDialogCounter.value++;
+  }, 100);
+}
+function closePaymentDialog() {
+  prevPaymentDialogCounter.value = 0;
+  paymentDialog.value = [];
+
+  appointments.value = [];
+  fetchAppointmentsData();
+}
 </script>

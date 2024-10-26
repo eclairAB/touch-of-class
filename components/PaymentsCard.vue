@@ -30,6 +30,7 @@
       class="commision-card px-10 py-5"
       @update:options="loadItems"
     ></v-data-table-server>
+    {{ paymentTable.serverItems }}
   </v-card>
 </template>
 <script setup>
@@ -74,6 +75,7 @@ const paymentTable = ref({
     { title: "Cashier", key: "cashier.first_name", align: "end" },
     { title: "Branch", key: "branch.name", align: "end" },
     { title: "Reference No.", key: "carbs", align: "end" },
+    { title: "Milestone", key: "payment_milestone", align: "end" },
     { title: "Date Time", key: "created_at", align: "end" },
   ],
   search: "",
@@ -117,10 +119,21 @@ const FakeAPI = {
 function loadItems({ page, itemsPerPage, sortBy }) {
   paymentTable.value.loading = true;
   fetchRedeems()
+  // fetchPayments()
 }
 async function fetchRedeems() {
   try {
     const response = await request("post", `/redeems/`);
+    console.log(12, response);
+    paymentTable.value.serverItems = response;
+    paymentTable.value.loading = false;
+  } catch (error) {
+    console.error(error)
+  }
+}
+async function fetchPayments() {
+  try {
+    const response = await request("get", `/payments/`);
     console.log(12, response);
     paymentTable.value.serverItems = response;
     paymentTable.value.loading = false;
