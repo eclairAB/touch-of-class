@@ -114,6 +114,11 @@ const items = ref({
       title: "Manage Staffs",
       value: "/touch-of-class/admin/staffs",
     },
+    {
+      icon: "mdi-sale",
+      title: "Manage Promos",
+      value: "/touch-of-class/admin/promos",
+    },
   ],
   cashier: [
     {
@@ -147,7 +152,7 @@ async function menuItemClick(item) {
       userStore.setBranch({
         select: "",
         dialog: false,
-      });
+      }); 
 
       try {
         await request("post", `/logout/`);

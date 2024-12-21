@@ -48,7 +48,7 @@
 
       <template v-slot:default="{ items }">
         <v-row>
-          <v-col v-for="(item, i) in items" :key="i" cols="12" sm="6" xl="3">
+          <v-col v-for="(item, i) in items" :key="i" cols="12" sm="6" xl="6">
             <v-sheet border>
               <v-list-item title="Name" density="comfortable" lines="two">
                 <template v-slot:title>

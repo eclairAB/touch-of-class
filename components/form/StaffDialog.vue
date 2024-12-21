@@ -15,6 +15,7 @@
         title="Staff Information"
         flat
       >
+        <!-- {{ form.id }} : {{ userStore }} -->
         <v-skeleton-loader
           class="mx-auto w-100"
           max-width="600"
@@ -151,8 +152,10 @@
 const { request } = useNuxtApp().$api;
 import { useFormDialogStore } from "@/stores/formDialog";
 import { useAlertStore } from "@/stores/alertDialog";
+import { useUserStore } from "@/stores/user";
 const formDialog = useFormDialogStore();
 const alertDialog = useAlertStore();
+const userStore = useUserStore();
 const emit = defineEmits(["exitDialog"]);
 const roles = ref([]);
 const visible = ref(false);
@@ -166,7 +169,11 @@ const delete_confirmed = ref(false);
 const fetchRoles = async () => {
   try {
     const response = await request("get", `/staffs/roles/`);
-    roles.value = response.data;
+    response.forEach((element) => {
+      let aa = element.name.charAt(0).toUpperCase() + element.name.slice(1);
+      console.log(aa)
+    });
+    roles.value = response;
   } catch (error) {
     console.error("Failed to fetch roles data:", error);
   }
