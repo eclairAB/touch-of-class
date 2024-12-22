@@ -38,8 +38,19 @@
             variant="outlined"
             item-title="name"
             clearable
+            :disabled="
+              (form.combos == null ? false : form.combos.length > 0) ||
+              (form.services == null ? false : form.services.length > 0)
+            "
             :return-object="_true"
-            @update:modelValue="form.amount_paid = grandTotal() / 2"
+            @update:modelValue="
+              form.amount_paid =
+                form.packages == null
+                  ? grandTotal()
+                  : form.packages.length > 0
+                  ? grandTotal() / 2
+                  : grandTotal()
+            "
           ></v-autocomplete>
         </v-row>
         <v-row class="ga-3">
@@ -54,8 +65,19 @@
             variant="outlined"
             item-title="name"
             clearable
+            :disabled="
+              (form.packages == null ? false : form.packages.length > 0) ||
+              (form.services == null ? false : form.services.length > 0)
+            "
             :return-object="_true"
-            @update:modelValue="form.amount_paid = grandTotal() / 2"
+            @update:modelValue="
+              form.amount_paid =
+                form.packages == null
+                  ? grandTotal()
+                  : form.packages.length > 0
+                  ? grandTotal() / 2
+                  : grandTotal()
+            "
           ></v-autocomplete>
         </v-row>
         <v-row>
@@ -70,8 +92,19 @@
             variant="outlined"
             item-title="name"
             clearable
+            :disabled="
+              (form.combos == null ? false : form.combos.length > 0) ||
+              (form.packages == null ? false : form.packages.length > 0)
+            "
             :return-object="_true"
-            @update:modelValue="form.amount_paid = grandTotal() / 2"
+            @update:modelValue="
+              form.amount_paid =
+                form.packages == null
+                  ? grandTotal()
+                  : form.packages.length > 0
+                  ? grandTotal() / 2
+                  : grandTotal()
+            "
           ></v-autocomplete>
         </v-row>
       </v-form>
@@ -140,12 +173,22 @@
             label="Amount Paid"
             density="comfortable"
             variant="outlined"
-            :min="grandTotal() / 2"
+            :min="
+              form.packages == null
+                ? grandTotal()
+                : form.packages.length > 0
+                ? grandTotal() / 2
+                : grandTotal()
+            "
+            :disabled="
+              (form.combos == null ? false : form.combos.length > 0) ||
+              (form.services == null ? false : form.services.length > 0)
+            "
           />
         </v-col>
       </v-card>
       <v-card
-        v-if="form.packages || form.services"
+        v-if="form.packages || form.combos || form.services"
         flat
         border
         class="mt-5 py-5 px-10"
@@ -257,7 +300,11 @@ const packages = ref([]);
 const combos = ref([]);
 const services = ref([]);
 
-const form = ref({});
+const form = ref({
+  packages: null,
+  combos: null,
+  services: null,
+});
 
 const files = ref([]);
 const imagePreviews = ref([]);

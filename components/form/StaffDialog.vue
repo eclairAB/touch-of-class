@@ -69,7 +69,7 @@
                   required
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" md="12">
+              <v-col cols="12" md="6">
                 <v-autocomplete
                   v-model="form.role_id"
                   :error-messages="form_errors.role_id"
@@ -80,6 +80,20 @@
                   item-title="name"
                   item-value="id"
                   chips
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-autocomplete
+                  v-model="form.assigned_branch_id"
+                  :error-messages="form_errors.assigned_branch_id"
+                  :hide-details="!form_errors.assigned_branch_id"
+                  label="Assign Branch"
+                  :items="branches"
+                  variant="outlined"
+                  item-title="name"
+                  item-value="id"
+                  chips
+                  clearable
                 ></v-autocomplete>
               </v-col>
               <v-col cols="12" md="">
@@ -158,6 +172,7 @@ const alertDialog = useAlertStore();
 const userStore = useUserStore();
 const emit = defineEmits(["exitDialog"]);
 const roles = ref([]);
+const branches = ref([]);
 const visible = ref(false);
 
 // Form
@@ -178,6 +193,18 @@ const fetchRoles = async () => {
     console.error("Failed to fetch roles data:", error);
   }
 };
+const fetchBranches = async () => {
+  try {
+    const response = await request("get", `/branches/`);
+    response.forEach((element) => {
+      let aa = element.name.charAt(0).toUpperCase() + element.name.slice(1);
+      console.log(aa)
+    });
+    branches.value = response;
+  } catch (error) {
+    console.error("Failed to fetch roles data:", error);
+  }
+};
 const validateForm = async () => {
   const valid = await $refs.staff_form.validate();
 };
@@ -191,6 +218,7 @@ function submit() {
 }
 function dialogOpens() {
   fetchRoles();
+  fetchBranches();
   if (formDialog.staff.payload) {
     form.value = formDialog.staff.payload;
     create_mode.value = false;

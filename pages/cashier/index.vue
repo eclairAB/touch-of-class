@@ -15,5 +15,5 @@
 <script setup>
 import { useUserStore } from "@/stores/user";
 const userStore = useUserStore();
-userStore.checkBranch();
+// userStore.checkBranch();
 </script>

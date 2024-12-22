@@ -107,6 +107,8 @@ const authenticate = async () => {
     const route = response.role.name;
     userStore.setUsername([response.first_name, response.last_name]);
     userStore.setRole(route);
+    userStore.setBranch({ dialog: false, select: response.branch });
+
     navigateTo(`/${route}`);
 
     alertDialog.setAlert({

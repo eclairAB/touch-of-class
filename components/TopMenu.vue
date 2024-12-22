@@ -167,9 +167,9 @@ async function menuItemClick(item) {
 }
 
 function changeBranch() {
-  let branch = userStore.branch;
-  branch.dialog = true;
+  // let branch = userStore.branch;
+  // branch.dialog = true;
 
-  userStore.setBranch(branch);
+  // userStore.setBranch(branch);
 }
 </script>

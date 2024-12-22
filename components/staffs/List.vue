@@ -30,6 +30,9 @@
       <template v-slot:item.name="{ item }">
         <td>{{ item.first_name }} {{ item.last_name }}</td>
       </template>
+      <template v-slot:item.branch="{ item }">
+        <td><strong>{{ item.branch ? item.branch.name : '' }}</strong></td>
+      </template>
       <template v-slot:item.role="{ item }">
         <td>
           {{ item.role.name }}
@@ -75,6 +78,7 @@ const searchTimeout = ref(0);
 
 const listHeader = ref([
   { title: "Name", key: "name" },
+  { title: "Branch", key: "branch" },
   { title: "email", key: "email" },
   { title: "contact", key: "contact_number" },
   { title: "role", key: "role" },
