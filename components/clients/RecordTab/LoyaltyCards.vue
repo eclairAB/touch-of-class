@@ -5,7 +5,11 @@
       :key="index"
       class="view-loyalty-card-container"
     >
-      <img :src="card" alt="Loyalty Card" @click="() => showImg(index)" />
+      <img :src="card.url" alt="Loyalty Card" @click="() => showImg(index)" />
+      <br>
+      <small>
+        {{ card.upload_date }}
+      </small>
     </div>
     <VueEasyLightbox
       :visible="visibleRef"

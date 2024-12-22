@@ -188,7 +188,7 @@
         </v-col>
       </v-card>
       <v-card
-        v-if="form.packages || form.combos || form.services"
+        v-if="form.packages.length > 0 || form.combos.length > 0 || form.services.length > 0"
         flat
         border
         class="mt-5 py-5 px-10"
@@ -301,9 +301,9 @@ const combos = ref([]);
 const services = ref([]);
 
 const form = ref({
-  packages: null,
-  combos: null,
-  services: null,
+  packages: [],
+  combos: [],
+  services: [],
 });
 
 const files = ref([]);

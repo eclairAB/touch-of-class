@@ -127,6 +127,11 @@ const items = ref({
       value: "/touch-of-class/cashier",
     },
     {
+      icon: "mdi-cash-multiple",
+      title: "Payments",
+      value: `/touch-of-class/admin`,
+    },
+    {
       icon: "mdi-emoticon-happy",
       title: "Clients",
       value: "/touch-of-class/cashier/clients",
