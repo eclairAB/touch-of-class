@@ -20,7 +20,7 @@
           <v-chip
             class="ml-5"
             @click="changeBranch()"
-            v-if="userStore.role == 'cashier'"
+            v-if="userStore.role == 'Cashier'"
           >
             Current Branch:&nbsp;<span class="text">{{
               userStore.branch.select.name || "loading..."
@@ -88,7 +88,7 @@ const username = computed(() => userStore.username);
 const theme = useTheme();
 
 const items = ref({
-  admin: [
+  Admin: [
     {
       icon: "mdi-home",
       title: "Homepage",
@@ -120,7 +120,7 @@ const items = ref({
       value: "/touch-of-class/admin/promos",
     },
   ],
-  cashier: [
+  Cashier: [
     {
       icon: "mdi-home",
       title: "Homepage",
