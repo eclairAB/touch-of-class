@@ -136,6 +136,11 @@ const items = ref({
       title: "Clients",
       value: "/touch-of-class/cashier/clients",
     },
+    {
+      icon: "mdi-account-group",
+      title: "Employee Staff",
+      value: "/touch-of-class/cashier/staffs",
+    },
   ],
 });
 const menuItem = [

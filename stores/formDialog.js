@@ -34,6 +34,14 @@ export const useFormDialogStore = defineStore("formDialog", {
       dialog: false,
       payload: {},
     },
+    employee: {
+      dialog: false,
+      payload: {},
+    },
+    deductions: {
+      dialog: false,
+      payload: {},
+    },
     promo: {
       dialog: false,
       payload: {},
@@ -63,6 +71,12 @@ export const useFormDialogStore = defineStore("formDialog", {
     },
     setStaff(state) {
       this.staff = state;
+    },
+    setEmployee(state) {
+      this.employee = state;
+    },
+    setDeduction(state) {
+      this.deductions = state;
     },
     setPromo(state) {
       this.promo = state;
