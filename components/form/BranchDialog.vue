@@ -31,7 +31,7 @@
               <v-col cols="12" md="12">
                 <v-number-input
                   v-model="form.qouta_nurse"
-                  label="Nurse qouta per session"
+                  label="Nurse commission qouta"
                   hide-details
                   variant="outlined"
                   required

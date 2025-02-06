@@ -14,6 +14,7 @@
             type="date"
             outlined
             dense
+            @change="fetchCommissions"
           ></v-text-field>
         </v-col>
         <v-col cols="6">
@@ -23,6 +24,7 @@
             type="date"
             outlined
             dense
+            @change="fetchCommissions"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -33,9 +35,28 @@
         item-value="commission_amount"
         class="elevation-1"
       >
+      <template v-slot:item.commission_amount="{ item }">
+        <b>₱ {{ item.commission_amount || '0.00' }}</b>
+      </template>
+      <template v-slot:item.gross_sale="{ item }">
+        <b>₱ {{ item.gross_sale || '0.00' }}</b>
+      </template>
     </v-data-table>
-    <div class="text-right py-4 mr-3">
-      <b>Total Commission:</b> {{ totalcom }}
+    <div class="text-right py-4 mr-3" max-width="200">
+      <v-row>
+        <v-col cols="11" md="11">
+          Total Commission:
+        </v-col>
+        <v-col cols="1" md="1">
+          <b>₱ {{ totalcom }}</b>
+        </v-col>
+        <v-col cols="11" md="11">
+          Total Gross Sale:
+        </v-col>
+        <v-col cols="1" md="1">
+          <b>₱ {{ totalgross }}</b>
+        </v-col>
+      </v-row>
     </div>
     </v-card>
   </template>
@@ -46,7 +67,8 @@
     end_date: null,
   });
   const commissions = ref([]);
-  const totalcom = ref(null);
+  const totalcom = ref(0);
+  const totalgross = ref(0);
   const comHeader = ref([
       { title: "Client Name", key: "client" },
       { title: "Package", key: "package" },
@@ -60,6 +82,12 @@
       sortable: false,
       key: "commission_amount",
       },
+      {
+      title: "Gross Sale",
+      align: "end",
+      sortable: false,
+      key: "gross_sale",
+      },
   ])
   const commissionTable = useState(() => {});
   
@@ -72,6 +100,7 @@
       const response = await request("post", `/staffs/stylist/commissions`, payload);
       commissions.value = response.data
       totalcom.value = response.total_commission
+      totalgross.value = response.total_gross
     } catch (error) {
       console.error(error);
     }

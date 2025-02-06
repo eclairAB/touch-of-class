@@ -422,7 +422,10 @@ const grandTotal = () => {
 
 const updateAmountPaid = (selectedDiscount) => {
   console.log(selectedDiscount)
-  let total = grandTotal() / 2;
+  let total = grandTotal()
+  if(form.value.packages.length > 0) {
+    total.value = grandTotal() / 2;
+  }
   sub_amount.value = total;
   let discountAmount = selectedDiscount.amount;
   if (selectedDiscount.percentage === 1) {
