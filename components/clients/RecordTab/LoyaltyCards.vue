@@ -7,13 +7,13 @@
     >
       <img :src="card.url" alt="Loyalty Card" @click="() => showImg(index)" />
       <br>
-      <small>
-        {{ card.upload_date }}
-      </small>
+      <center>
+        <small>{{ card.upload_date }}</small>
+      </center>
     </div>
     <VueEasyLightbox
       :visible="visibleRef"
-      :imgs="cards"
+      :imgs="cards.map(card => card.url)"
       :index="indexRef"
       @hide="onHide"
     />

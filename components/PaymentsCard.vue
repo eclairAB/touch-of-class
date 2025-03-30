@@ -71,6 +71,12 @@ const paymentTable = ref({
       sortable: false,
       key: "amount_paid",
     },
+    {
+      title: "Discount Amount",
+      align: "start",
+      sortable: false,
+      key: "discount_paid",
+    },
     { title: "Client Name", key: "name", align: "end" },
     { title: "Cashier", key: "cashier.first_name", align: "end" },
     { title: "Branch", key: "branch.name", align: "end" },

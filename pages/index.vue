@@ -48,7 +48,7 @@
           <v-radio-group v-model="inputFill" @update:modelValue="setFields">
             <v-radio label="Fill Admin" value="1"></v-radio>
             <v-radio label="Fill Cashier" value="2"></v-radio>
-            <!-- <v-radio label="Fill Stylist" value="3"></v-radio> -->
+            <v-radio label="Fill Stylist" value="3"></v-radio>
           </v-radio-group>
         </v-form>
       </v-col>

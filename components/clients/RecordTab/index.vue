@@ -56,6 +56,7 @@ import {
   ClientsRecordTabActions,
   ClientsRecordTabAppointments,
   ClientsRecordTabLoyaltyCards,
+  ClientsRecordTabFreeServices,
   ClientsRecordTabPayment,
 } from "#components";
 import { useFormDialogStore } from "@/stores/formDialog";
@@ -65,6 +66,7 @@ const components_ = {
   action: ClientsRecordTabActions,
   appointments: ClientsRecordTabAppointments,
   cards: ClientsRecordTabLoyaltyCards,
+  fs: ClientsRecordTabFreeServices,
   payment: ClientsRecordTabPayment,
 };
 
@@ -87,6 +89,11 @@ const tabs = ref([
     text: "Loyalty Cards",
     value: "tab-3",
     component: "cards",
+  },
+  {
+    text: "Free Services",
+    value: "tab-4",
+    component: "fs",
   },
 ]);
 

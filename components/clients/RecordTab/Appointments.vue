@@ -222,7 +222,7 @@ const fetchAppointmentsData = async () => {
   try {
     const client_id = formDialog.clientInfo.payload.id;
     const response = await request("get", `/appointments/${client_id}`);
-
+    console.log(response)
     response.forEach((appointment) => {
       if (appointment.appointment_packages.length > 0) {
         insertPackage(appointment.appointment_packages);
@@ -394,7 +394,7 @@ const fetchStylistData = async () => {
       search: availForm.value.stylist,
       role: "stylist",
     };
-    const response = await request("post", `/staffs/search/`, filter);
+    const response = await request("get", `/employees/`, filter);
 
     if (response.length == 0) {
       availForm.stylist = null;
