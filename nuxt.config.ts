@@ -15,7 +15,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // apiBaseUrl: process.env.API_BASE_URL || 'https://your-laravel-backend.com/api',
-      apiBaseUrl: 'http://localhost/api',
+      apiBaseUrl: 'http://127.0.0.1:8000/api',
     }
   },
   experimental: {

@@ -65,7 +65,7 @@
               class="text-none ml-3 mb-1"
               size="small"
               prepend-icon="mdi-download"
-              @click="generateReport(item)"
+              @click="openDialog(item)"
             >
               Generate Report
             </v-btn>
@@ -75,6 +75,48 @@
       <ClientsSingle />
       <FormEmployeeDialog @exitDialog="exitDialog" />
       <FormEmployeeDeduction @exitDialog="exitDialog" />
+      <v-dialog v-model="dialog" max-width="400">
+        <v-card>
+          <v-card-title>Select Date Range</v-card-title>
+          <v-card-text>
+            <v-row>
+              <v-col cols="12">
+                <v-menu v-model="startMenu" :close-on-content-click="false">
+                  <template v-slot:activator="{ props }">
+                    <v-text-field
+                      v-bind="props"
+                      label="Start Date"
+                      :model-value="formattedStartDate"
+                      readonly
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker v-model="startDate" @update:model-value="startMenu = false"></v-date-picker>
+                </v-menu>
+              </v-col>
+
+              <v-col cols="12">
+                <v-menu v-model="endMenu" :close-on-content-click="false">
+                  <template v-slot:activator="{ props }">
+                    <v-text-field
+                      v-bind="props"
+                      label="End Date"
+                      :model-value="formattedEndDate"
+                      readonly
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker v-model="endDate" @update:model-value="endMenu = false"></v-date-picker>
+                </v-menu>
+              </v-col>
+            </v-row>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="dialog = false">Cancel</v-btn>
+            <v-btn color="primary" @click="generateReport">Generate</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-card>
   </template>
     <script setup>
@@ -85,7 +127,35 @@
   const filter = ref({});
   const clients = ref([]);
   const searchTimeout = ref(0);
+  const dialog = ref(false);
+  const startDate = ref(null);
+  const endDate = ref(null);
+  const selectedStaff = ref(null);
+  const startMenu = ref(false);
+  const endMenu = ref(false);
   
+  function openDialog(staff) {
+    selectedStaff.value = staff;
+    dialog.value = true;
+  }
+  const formattedStartDate = computed(() =>
+    startDate.value
+      ? new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }).format(new Date(startDate.value))
+      : ""
+  );
+  const formattedEndDate = computed(() =>
+    endDate.value
+      ? new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }).format(new Date(endDate.value))
+      : ""
+  );
   const listHeader = ref([
     { title: "Name", key: "name" },
     { title: "Branch", key: "branch" },
@@ -128,12 +198,22 @@
   }
   
   async function generateReport(staff) {
+    if (!startDate.value || !endDate.value) {
+      alert("Please select both start and end dates.");
+      return;
+    }
+
+    dialog.value = false;
     try {
       const config = useRuntimeConfig();
       const response = await axios.get(
-        `${config.public.apiBaseUrl}/reports/staff/${staff.id}`,
+        `${config.public.apiBaseUrl}/reports/staff/${selectedStaff.value.id}`,
         {
-          responseType: "blob", // Set response type to blob for binary data
+          params: {
+            start_date: formattedStartDate.value,
+            end_date: formattedEndDate.value,
+          },
+          responseType: "blob",
         }
       );
   
@@ -144,7 +224,7 @@
       // Create a link and trigger the download
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.setAttribute("download", `${staff.first_name}-report.pdf`); // Set the file name
+      link.setAttribute("download", `${selectedStaff.value.first_name}-report.pdf`); // Set the file name
       document.body.appendChild(link);
       link.click();
   

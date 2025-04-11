@@ -70,7 +70,7 @@
                       class="text-none ml-3 mb-1"
                       size="small"
                       prepend-icon="mdi-download"
-                      @click="generateReport(item.raw)"
+                      @click="openDialog(item.raw)"
                     >
                       Generate Report
                     </v-btn>
@@ -119,7 +119,31 @@
       </template>
     </v-data-iterator>
     <FormBranchDialog @exitDialog="exitDialog" />
+    <v-dialog v-model="dialog" max-width="400">
+      <v-card>
+        <v-card-title>Select Report Period</v-card-title>
+        <v-card-text>
+          <v-select
+            v-model="selectedMonth"
+            :items="months"
+            label="Select Month"
+          ></v-select>
+
+          <v-select
+            v-model="selectedYear"
+            :items="years"
+            label="Select Year"
+          ></v-select>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click="dialog = false">Cancel</v-btn>
+          <v-btn color="primary" @click="generateReport">Generate</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
+
 </template>
   <script setup>
 import { useFormDialogStore } from "@/stores/formDialog";
@@ -130,7 +154,32 @@ const formDialogStore = useFormDialogStore();
 const alertDialog = useAlertStore();
 const itemsPerPage = ref(8);
 const branches = ref([]);
+const dialog = ref(false);
+const selectedMonth = ref(null);
+const selectedYear = ref(null);
+const selectedBranch = ref(null);
 
+const months = [
+  { title: "January", value: 1 },
+  { title: "February", value: 2 },
+  { title: "March", value: 3 },
+  { title: "April", value: 4 },
+  { title: "May", value: 5 },
+  { title: "June", value: 6 },
+  { title: "July", value: 7 },
+  { title: "August", value: 8 },
+  { title: "September", value: 9 },
+  { title: "October", value: 10 },
+  { title: "November", value: 11 },
+  { title: "December", value: 12 }
+];
+
+const years = Array.from({ length: 20 }, (_, i) => new Date().getFullYear() - i);
+
+function openDialog(branch) {
+  selectedBranch.value = branch;
+  dialog.value = true;
+}
 const onClickSeeAll = () => {
   itemsPerPage.value = itemsPerPage.value === 8 ? branches.value.length : 8;
 };
@@ -164,7 +213,9 @@ function exitDialog() {
 async function generateReport(branch) {
   try {
     const config = useRuntimeConfig();
-    const response = await axios.get(`${config.public.apiBaseUrl}/reports/branch/${branch.id}`, {
+    const params = { month: selectedMonth.value, year: selectedYear.value };
+    const response = await axios.get(`${config.public.apiBaseUrl}/reports/branch/${selectedBranch.value.id}`, {
+      params,
       responseType: "blob", // Set response type to blob for binary data
     });
 
@@ -175,13 +226,14 @@ async function generateReport(branch) {
     // Create a link and trigger the download
     const link = document.createElement("a");
     link.href = blobUrl;
-    link.setAttribute("download", `${branch.name}-report.pdf`); // Set the file name
+    link.setAttribute("download", `${selectedBranch.value.name}-report.pdf`); // Set the file name
     document.body.appendChild(link);
     link.click();
 
     // Cleanup
     document.body.removeChild(link);
     URL.revokeObjectURL(blobUrl);
+    dialog.value = false;
   } catch (error) {
     console.error(error);
   }

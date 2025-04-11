@@ -550,6 +550,18 @@ const createAppointment = async () => {
     form.value = {};
     files.value = [];
     imagePreviews.value = [];
+    imagePreviewsFs.value = [];
+    form.value = {
+      packages: [],
+      combos: [],
+      services: [],
+      discounts: null,
+      disc_amount: 0,
+    };
+    sub_amount.value = 0;
+    files.value = [];
+    imagePreviews.value = [];
+    currentStep.value = 1;
   } catch (error) {
     console.error(error);
     alertDialog.setAlert({

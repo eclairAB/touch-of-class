@@ -141,6 +141,11 @@ const items = ref({
       title: "Employee Staff",
       value: "/touch-of-class/cashier/staffs",
     },
+    {
+      icon: "mdi-database",
+      title: "Expenses",
+      value: "/touch-of-class/cashier/expenses",
+    },
   ],
 });
 const menuItem = [
