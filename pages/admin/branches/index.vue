@@ -74,6 +74,17 @@
                     >
                       Generate Report
                     </v-btn>
+                    <v-btn
+                      flat
+                      rounded
+                      color="grey-lighten-3"
+                      class="text-none ml-3 mb-1"
+                      size="small"
+                      prepend-icon="mdi-download"
+                      @click="generateTodaysReport(item.raw)"
+                    >
+                      Generate Daily Report
+                    </v-btn>
                   </strong>
                 </template>
               </v-list-item>
@@ -238,5 +249,38 @@ async function generateReport(branch) {
     console.error(error);
   }
 }
+
+async function generateTodaysReport(branch) {
+  try {
+    const config = useRuntimeConfig();
+    const today = new Date();
+    const params = { 
+      month: today.getMonth() + 1,
+      year: today.getFullYear(),
+      day: today.getDate()
+    };
+    const response = await axios.get(
+      `${config.public.apiBaseUrl}/reports/branch/${branch.id}`,
+      {
+        params,
+        responseType: "blob",
+      }
+    );
+
+    const blobUrl = URL.createObjectURL(
+      new Blob([response.data], { type: "application/pdf" })
+    );
+
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.setAttribute("download", `${branch.name}-report-today.pdf`);
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
+  } catch (error) {
+    console.error(error);
+  }
+}
 </script>
-  
