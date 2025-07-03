@@ -101,7 +101,7 @@
                     size="small"
                     color="success"
                   >
-                    Availed
+                    Availed on {{ formatDateTime(service.updated_at) }}
                   </v-chip>
                   <v-chip v-else size="small" color="info"> Unavailed </v-chip>
                 </div>
@@ -249,6 +249,21 @@ function formatDate(inputDate) {
   const date = new Date(inputDate);
   const options = { year: "numeric", month: "short", day: "numeric" };
   return date.toLocaleDateString("en-US", options).replace(",", "");
+}
+
+function formatDateTime(inputDate) {
+  const date = new Date(inputDate);
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  const datePart = date.toLocaleDateString("en-US", options);
+
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "pm" : "am";
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  const minuteStr = minutes < 10 ? "0" + minutes : minutes;
+
+  return `${datePart} | ${hours}:${minuteStr} ${ampm}`;
 }
 
 function insertPackage(package_redeems) {
